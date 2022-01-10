@@ -1,0 +1,63 @@
+@charset "UTF-8";
+h1,h2 {
+    color: Navy;
+    background-color: cornsilk;
+    text-align: center;
+}
+
+.formdiv {
+    background-color: lightcyan;
+}
+
+.datetime{
+    font-size: xx-small;
+    background-color: darkkhaki;
+    size: 200px;
+}
+
+.boxed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-style: solid;
+    border-color: black;
+    border-width: 3px;
+}
+
+#dataentrytable {
+    width: 100%;
+    background-color: darkseagreen;
+}
+
+#dataentrydiv, #dataentryform, #formdiv, #buttondiv, table, tbody, tr {
+    width: 100%;
+    align-content: center;
+    border-radius: 5px;
+}
+
+.aLabel {
+    width: 30%;
+    text-align: right;
+}
+
+.aText, .magtext {
+    width: 90%;
+    border-radius: 5px;
+}
+
+.buttonrow {
+    align-content: center;
+    width: 100%;
+    background-color: darkred;
+    padding: 2px;
+}
+
+.buttoninput {
+    align-content: center;
+    background-color: lightgrey;
+    color: navy;
+    font-weight: bold;
+    margin: 3px;
+    border-radius: 5px;
+    border-style: outset;
+}

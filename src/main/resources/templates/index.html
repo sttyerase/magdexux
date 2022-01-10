@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome: Magazine Index Entry Form</title>
+    <!-- th:href must use leading / in path definition. -->
+    <link href="../static/css/Site.css" th:href="@{/css/Site.css}" rel="stylesheet" media="screen"/>
+</head>
+<body>
+<h2>Magazine Index Entry Form</h2>
+<div id="dataentrydiv" class="boxed">
+    <form id="dataentryform" name="dataentry">
+        <table id="dataentrytable">
+            <tbody>
+            <tr>
+                <td class="aLabel"><label for="articleId">Article Id: </label> </td>
+                <td class="aText"><input type="text" class="magtext" id="articleId"></td>
+            </tr>
+            <tr>
+                <td class="aLabel"><label for="articleTitle">Article Title: </label> </td>
+                <td class="aText"><input type="text" class="magtext" id="articleTitle"></td>
+            </tr>
+            <tr>
+                <td class="aLabel"><label for="articleSynopsis">Article Synopsis: </label> </td>
+                <td class="aText"><input type="text" class="magtext" id="articleSynopsis"></td>
+            </tr>
+            <tr>
+                <td class="aLabel"><label for="articleCategory">Article Category: </label> </td>
+                <td class="aText"><input type="text" class="magtext" id="articleCategory"></td>
+            </tr>
+            <tr>
+                <td class="aLabel"><label for="articleKeywords">Article Keywords: </label> </td>
+                <td class="aText"><input type="text" class="magtext" id="articleKeywords"></td>
+            </tr>
+            <tr>
+                <td class="aLabel"><label for="articleAuthor">Article Author: </label> </td>
+                <td class="aText"><input type="text" class="magtext" id="articleAuthor"></td>
+            </tr>
+            <tr>
+                <td class="aLabel"><label for="articleYear">Article Year: </label> </td>
+                <td class="aText"><input type="text" class="magtext" id="articleYear"></td>
+            </tr>
+            <tr>
+                <td class="aLabel"><label for="articleMonth">Article Month: </label> </td>
+                <td class="aText"><input type="text" class="magtext" id="articleMonth"></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+<div id="buttondiv" class="boxed">
+    <table>
+        <tbody>
+        <tr class="buttonrow">
+            <td><input class="buttoninput" id="findbutton" type="button" value="FIND"/></td>
+            <td><input class="buttoninput" id="addbutton" type="button" value="ADD"/></td>
+            <td><input class="buttoninput" id="updatebutton" type="button" value="UPDATE"/></td>
+            <td><input class="buttoninput" id="deletebutton" type="button" value="DELETE"/></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="datetime">
+    <table id="datetimetable">
+        <tbody>
+        <tr>
+            <td class="dtfirstcol"  th:text="#{welcomepage.trailer.message}">welcome message goes here</td>
+            <td class="dtsecondcol" th:text=" II "></td>
+            <td class="dtthirdcol"  th:text="${today}">Today, Now</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
