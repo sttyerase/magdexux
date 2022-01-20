@@ -9,7 +9,7 @@
 <body>
 <h2>Magazine Index Entry Form</h2>
 <div id="dataentrydiv" class="boxed">
-    <form id="dataentryform" name="dataentry">
+    <form id="dataentryform" name="dataentry" method="post" action="#" th:action="@{/managerecord}">
         <table id="dataentrytable">
             <tbody>
             <tr>
@@ -46,19 +46,22 @@
             </tr>
             </tbody>
         </table>
+        <div id="buttondiv" class="boxed">
+            <table>
+                <tbody>
+                <tr class="buttonrow">
+                    <td><input class="buttoninput" id="findbutton" type="button" value="FIND"/></td>
+                    <td><input class="buttoninput" id="addbutton" type="button" value="ADD"/></td>
+                    <td><input class="buttoninput" id="updatebutton" type="button" value="UPDATE"/></td>
+                    <td><input class="buttoninput" id="deletebutton" type="button" value="DELETE"/></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </form>
 </div>
-<div id="buttondiv" class="boxed">
-    <table>
-        <tbody>
-        <tr class="buttonrow">
-            <td><input class="buttoninput" id="findbutton" type="button" value="FIND"/></td>
-            <td><input class="buttoninput" id="addbutton" type="button" value="ADD"/></td>
-            <td><input class="buttoninput" id="updatebutton" type="button" value="UPDATE"/></td>
-            <td><input class="buttoninput" id="deletebutton" type="button" value="DELETE"/></td>
-        </tr>
-        </tbody>
-    </table>
+<div id="messagetextdiv">
+    <textarea id="messagetextarea" class="boxed"></textarea>
 </div>
 <div class="datetime">
     <table id="datetimetable">
