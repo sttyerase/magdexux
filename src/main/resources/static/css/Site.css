@@ -29,7 +29,7 @@ h1,h2 {
     background-color: darkseagreen;
 }
 
-#dataentrydiv, #dataentryform, #formdiv, #buttondiv, table, tbody, tr {
+#dataentrydiv, #dataentryform, #formdiv, #buttondiv, #messagetextarea, table, tbody, tr {
     width: 100%;
     align-content: center;
     border-radius: 5px;
@@ -60,4 +60,12 @@ h1,h2 {
     margin: 3px;
     border-radius: 5px;
     border-style: outset;
+}
+
+#messagetextarea {
+    width: 99%;
+}
+
+#articleId {
+    width: 100px;
 }
