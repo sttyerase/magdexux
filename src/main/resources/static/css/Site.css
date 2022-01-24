@@ -9,18 +9,17 @@ h1,h2 {
     background-color: lightcyan;
 }
 
-.datetime{
+.datetimefooter{
     font-size: xx-small;
     background-color: darkkhaki;
     size: 200px;
 }
 
 .boxed {
-    display: flex;
     align-items: center;
     justify-content: center;
     border-style: solid;
-    border-color: black;
+    border-color: white;
     border-width: 3px;
 }
 
@@ -29,7 +28,7 @@ h1,h2 {
     background-color: darkseagreen;
 }
 
-#dataentrydiv, #dataentryform, #formdiv, #buttondiv, #messagetextarea, table, tbody, tr {
+#dataentrydiv, #buttondiv, #messagetextarea, table, tbody, tr {
     width: 100%;
     align-content: center;
     border-radius: 5px;
@@ -64,6 +63,7 @@ h1,h2 {
 
 #messagetextarea {
     width: 99%;
+    min-height: 90px;
 }
 
 #articleId {
