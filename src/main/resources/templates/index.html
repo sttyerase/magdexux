@@ -9,40 +9,40 @@
 <body>
 <h2>Magazine Index Entry Form</h2>
 <div id="dataentrydiv" class="boxed">
-    <form id="dataentryform" name="dataentry" method="post" action="#" th:action="@{/managerecord}">
+    <form id="dataentryform" name="dataentryform">
         <table id="dataentrytable">
             <tbody>
             <tr>
-                <td class="aLabel"><label for="articleId">Article Id: </label> </td>
-                <td class="aText"><input type="text" class="magtext" id="articleId"></td>
+                <td class="aLabel"><label for="articleId">Article Id: </label></td>
+                <td class="aText"><input type="text" class="magtext" id="articleId" name="articleid" form="dataentryform" th:field="*{myarticle.articleId}"/></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleTitle">Article Title: </label> </td>
-                <td class="aText"><input type="text" class="magtext" id="articleTitle"></td>
+                <td class="aLabel"><label for="articleTitle">Article Title: </label></td>
+                <td class="aText"><input type="text" class="magtext" id="articleTitle" th:field="*{myarticle.articleTitle}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleSynopsis">Article Synopsis: </label> </td>
-                <td class="aText"><input type="text" class="magtext" id="articleSynopsis"></td>
+                <td class="aLabel"><label for="articleSynopsis">Article Synopsis: </label></td>
+                <td class="aText"><input type="text" class="magtext" id="articleSynopsis" th:field="*{myarticle.articleSynopsis}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleCategory">Article Category: </label> </td>
-                <td class="aText"><input type="text" class="magtext" id="articleCategory"></td>
+                <td class="aLabel"><label for="articleCategory">Article Category: </label></td>
+                <td class="aText"><input type="text" class="magtext" id="articleCategory" th:field="*{myarticle.articleCategory}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleKeywords">Article Keywords: </label> </td>
-                <td class="aText"><input type="text" class="magtext" id="articleKeywords"></td>
+                <td class="aLabel"><label for="articleKeywords">Article Keywords: </label></td>
+                <td class="aText"><input type="text" class="magtext" id="articleKeywords" th:field="${myarticle.articleKeywords}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleAuthor">Article Author: </label> </td>
-                <td class="aText"><input type="text" class="magtext" id="articleAuthor"></td>
+                <td class="aLabel"><label for="articleAuthor">Article Author: </label></td>
+                <td class="aText"><input type="text" class="magtext" id="articleAuthor" th:field="*{myarticle.articleAuthor}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleYear">Article Year: </label> </td>
-                <td class="aText"><input type="text" class="magtext" id="articleYear"></td>
+                <td class="aLabel"><label for="articleYear">Article Year: </label></td>
+                <td class="aText"><input type="text" class="magtext" id="articleYear" th:field="*{myarticle.articleYear}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleMonth">Article Month: </label> </td>
-                <td class="aText"><input type="text" class="magtext" id="articleMonth"></td>
+                <td class="aLabel"><label for="articleMonth">Article Month: </label></td>
+                <td class="aText"><input type="text" class="magtext" id="articleMonth" th:field="${myarticle.articleMonth}"></td>
             </tr>
             </tbody>
         </table>
@@ -50,10 +50,11 @@
             <table>
                 <tbody>
                 <tr class="buttonrow">
-                    <td><input class="buttoninput" id="findbutton" type="button" value="FIND"/></td>
-                    <td><input class="buttoninput" id="addbutton" type="button" value="ADD"/></td>
-                    <td><input class="buttoninput" id="updatebutton" type="button" value="UPDATE"/></td>
-                    <td><input class="buttoninput" id="deletebutton" type="button" value="DELETE"/></td>
+                    <td><input form="dataentryform" class="buttoninput" id="findbutton" type="submit" value="FIND BY ID"
+                               th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}" /></td>
+                    <td><input form="dataentryform" class="buttoninput" id="addbutton" type="button" value="ADD"/></td>
+                    <td><input form="dataentryform" class="buttoninput" id="updatebutton" type="button" value="UPDATE"/></td>
+                    <td><input form="dataentryform" class="buttoninput" id="deletebutton" type="button" value="DELETE"/></td>
                 </tr>
                 </tbody>
             </table>
@@ -61,9 +62,10 @@
     </form>
 </div>
 <div id="messagetextdiv">
-    <textarea id="messagetextarea" class="boxed"></textarea>
+    <label id="messagetextarealabel" for="messagetextarea">MESSAGES: </label>
+    <textarea id="messagetextarea" class="boxed" th:text="${textmessage}"></textarea>
 </div>
-<div class="datetime">
+<div class="datetimefooter">
     <table id="datetimetable">
         <tbody>
         <tr>
