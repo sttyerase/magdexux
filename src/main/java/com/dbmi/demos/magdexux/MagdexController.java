@@ -1,13 +1,13 @@
 package com.dbmi.demos.magdexux;
 
 import java.util.Date;
-import java.util.HashMap;
 
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,29 +20,24 @@ import javax.servlet.http.HttpServletRequest;
 public class MagdexController {
     private final Logger myLogger = LoggerFactory.getLogger(MagdexController.class);
     private String textMessage    = "Text message goes here.";
-    private String apiUrl;
-    private Gson   myGson         = new Gson();
-    private HashMap<String,String> myHashMap = new HashMap<>();
-    private String jsonString = "{\n" +
-            "    \"articleId\": 7,\n" +
-            "    \"articleTitle\": \"Alaska Burning\",\n" +
-            "    \"articleAuthor\": \"Randi Jandt and Alison York\",\n" +
-            "    \"articleSynopsis\": \"Wildfire is transforming the landscape of the high north and amplifying climate change\",\n" +
-            "    \"articleCategory\": \"Climate Change\",\n" +
-            "    \"articleKeywords\": \"global warming climate wildfire ecology\",\n" +
-            "    \"articleMonth\": 10,\n" +
-            "    \"articleYear\": 2021\n" +
-            "}";
+    @Value("${magdex.api.location}")
+    private String apiLocation;
+
+    @Bean
+    public ResourceBundleMessageSource messageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename("application");  // basename = name of file that contains the properties, e.g., application.properties
+        return messageSource;
+    } // MESSAGESOURCE()
 
     @RequestMapping("/")
     public String home(Model aModel, HttpServletRequest request) {
-        Article myArticle = new Article();
         myLogger.trace("Requested root page.");
         request.getSession().invalidate();
         request.getSession(true);
         textMessage = "Welcome to the Magazine Article Index Entry Form. Add / Search / Find / Update magazine article references here.";
-        myArticle = myGson.fromJson(jsonString,Article.class);
-        aModel.addAttribute("myarticle",myArticle);
+        // myArticle = myGson.fromJson(jsonString,Article.class); // EXAMPLE USING GSON
+        aModel.addAttribute("myarticle",new Article());
         aModel.addAttribute("textmessage",textMessage);
         aModel.addAttribute("today", new Date().toString());
         return "index";
@@ -51,35 +46,61 @@ public class MagdexController {
     @RequestMapping("/newerror")
     public String error(Model aModel, HttpServletRequest request, String errorMessage) {
         myLogger.trace("NEWERROR: requested.");
+        textMessage = request.getParameter("errormessage" + errorMessage);
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("today", new Date().toString());
         return "error";
     } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/findrecordbyid")
-    public String findRecordById(Model aModel, HttpServletRequest request, String errorMessage) {
-        myLogger.trace("FINDRECORDBYID: requested.");
+    public String findRecordById(Model aModel, HttpServletRequest request) {
+        myLogger.trace("FIND RECORD BY ID: requested.");
         String idNum = request.getParameter("articleId");
-        apiUrl = "http://dans-mbp:8080/magdex/articles/find/id/" + idNum;
-        myLogger.trace("FINDRECORDBYID url: " + apiUrl);
-        WebClient myWebClient = WebClient.create(apiUrl);
+        myLogger.trace("FIND RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
+        textMessage = "Found article id#: " + idNum;
+        WebClient myWebClient = WebClient.create(apiLocation);
         Mono<Article> entityMono = myWebClient.get()
+                .uri("/find/id/" + idNum)
+                .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Article.class)
+                .doOnError(error -> textMessage = "Unable to find requested article: " + error.getMessage())
                 .onErrorReturn(new Article());
         Article myArticle = entityMono.block();  // HOLY CRAP, IT WORKED!! :D
-        textMessage = "This is find by id.";
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", myArticle);
         aModel.addAttribute("today", new Date().toString());
         return "index";
     } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
-    @Bean
-    public ResourceBundleMessageSource messageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("application");  // basename = name of file that contains the properties, e.g., application.properties
-        return messageSource;
-    } // MESSAGESOURCE()
+    @RequestMapping("/addrecord")
+    public String addRecord(Model aModel, HttpServletRequest request) {
+        myLogger.trace("ADD RECORD: requested.");
+        Article myArticle = new Article();
+        // GET THE INPUT VALUES FROM THE FORM
+        myArticle.articleTitle = request.getParameter("articleTitle");
+        myArticle.articleAuthor = request.getParameter("articleAuthor");
+        myArticle.articleSynopsis = request.getParameter("articleSynopsis");
+        myArticle.articleCategory = request.getParameter("articleCategory");
+        myArticle.articleKeywords = request.getParameter("articleKeywords");
+        myArticle.articleMonth = Integer.parseInt(request.getParameter("articleMonth"));
+        myArticle.articleYear = Integer.parseInt(request.getParameter("articleYear"));
+        myLogger.trace("Article inputs: " + myArticle.articleTitle);
+        myLogger.trace("ADD RECORD url: " + apiLocation + "/new");
+        textMessage = "Added article: " + myArticle.articleTitle;
+        WebClient myWebClient = WebClient.create(apiLocation);
+        Mono<Void> entityMono = myWebClient.post()
+                .uri("/new")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(myArticle)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .doOnError(error -> textMessage = "Unable to add new article: " + error.getMessage());
+        entityMono.block();
+        aModel.addAttribute("textmessage", textMessage);
+        aModel.addAttribute("myarticle", myArticle);
+        aModel.addAttribute("today", new Date().toString());
+        return "index";
+    } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
 } // CLASS
