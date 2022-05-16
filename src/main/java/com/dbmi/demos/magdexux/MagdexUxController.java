@@ -1,12 +1,11 @@
 package com.dbmi.demos.magdexux;
 
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,11 +14,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.Duration;
+import java.util.Date;
 
 @Controller
-public class MagdexController {
-    private final Logger myLogger = LoggerFactory.getLogger(MagdexController.class);
-    private String textMessage    = "Text message goes here.";
+public class MagdexUxController {
+    private final Logger myLogger = LoggerFactory.getLogger(MagdexUxController.class);
+    private String textMessage = "Text message goes here.";
     @Value("${magdex.api.location}")
     private String apiLocation;
 
@@ -37,8 +38,8 @@ public class MagdexController {
         request.getSession(true);
         textMessage = "Welcome to the Magazine Article Index Entry Form. Add / Search / Find / Update magazine article references here.";
         // myArticle = myGson.fromJson(jsonString,Article.class); // EXAMPLE USING GSON
-        aModel.addAttribute("myarticle",new Article());
-        aModel.addAttribute("textmessage",textMessage);
+        aModel.addAttribute("myarticle", new Article());
+        aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("today", new Date().toString());
         return "index";
     } // HOME
@@ -64,14 +65,21 @@ public class MagdexController {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Article.class)
-                .doOnError(error -> textMessage = "Unable to find requested article: " + error.getMessage())
+                .timeout(Duration.ofMillis(5000))
+                .doOnError(error -> textMessage = "Unable to find requested article id#: " + idNum + " error: " + error.getMessage())
                 .onErrorReturn(new Article());
-        Article myArticle = entityMono.block();  // HOLY CRAP, IT WORKED!! :D
+        Article myArticle = entityMono.block();
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", myArticle);
         aModel.addAttribute("today", new Date().toString());
         return "index";
     } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+
+    @RequestMapping("/findnextrecord")
+    public String findnextrecord(Model aModel, HttpServletRequest request) {
+        int idNum = Integer.parseInt(request.getParameter("articleId"));
+        return this.findRecordById(aModel,request);
+    } // FINDNEXTRECORD(MODEL,HTTPSERVLETREQUEST)
 
     @RequestMapping("/addrecord")
     public String addRecord(Model aModel, HttpServletRequest request) {
@@ -88,15 +96,20 @@ public class MagdexController {
         myLogger.trace("Article inputs: " + myArticle.articleTitle);
         myLogger.trace("ADD RECORD url: " + apiLocation + "/new");
         textMessage = "Added article: " + myArticle.articleTitle;
+        // USE WEBCLIENT TO SEND REQUEST AND RESOLVE RESPONSE
         WebClient myWebClient = WebClient.create(apiLocation);
-        Mono<Void> entityMono = myWebClient.post()
-                .uri("/new")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(myArticle)
-                .retrieve()
-                .bodyToMono(Void.class)
-                .doOnError(error -> textMessage = "Unable to add new article: " + error.getMessage());
-        entityMono.block();
+        try {
+            Mono<Article> entityMono = myWebClient.post()
+                    .uri("/new")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(myArticle)
+                    .retrieve()
+                    .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("Internal server error: " + error.statusCode())))
+                    .bodyToMono(Article.class);
+            entityMono.block();
+        } catch (RuntimeException runtimeException) {
+            textMessage = "Error while adding record: " + runtimeException.getMessage();
+        } // TRY-CATCH
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", myArticle);
         aModel.addAttribute("today", new Date().toString());
