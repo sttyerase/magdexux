@@ -55,13 +55,14 @@ public class MagdexUxController {
 
     @RequestMapping("/findrecordbyid")
     public String findRecordById(Model aModel, HttpServletRequest request) {
+        String theUri = "/find/id/";
         myLogger.trace("FIND RECORD BY ID: requested.");
         String idNum = request.getParameter("articleId");
         myLogger.trace("FIND RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
         textMessage = "Found article id#: " + idNum;
         WebClient myWebClient = WebClient.create(apiLocation);
         Mono<Article> entityMono = myWebClient.get()
-                .uri("/find/id/" + idNum)
+                .uri(theUri + idNum)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Article.class)
@@ -83,7 +84,8 @@ public class MagdexUxController {
 
     @RequestMapping("/addrecord")
     public String addRecord(Model aModel, HttpServletRequest request) {
-        myLogger.trace("ADD RECORD: requested.");
+        String theUri = "/new";
+        myLogger.debug("ADD RECORD: requested.");
         Article myArticle = new Article();
         // GET THE INPUT VALUES FROM THE FORM
         myArticle.articleTitle = request.getParameter("articleTitle");
@@ -93,25 +95,24 @@ public class MagdexUxController {
         myArticle.articleKeywords = request.getParameter("articleKeywords");
         myArticle.articleMonth = Integer.parseInt(request.getParameter("articleMonth"));
         myArticle.articleYear = Integer.parseInt(request.getParameter("articleYear"));
-        myLogger.trace("Article inputs: " + myArticle.articleTitle);
-        myLogger.trace("ADD RECORD url: " + apiLocation + "/new");
-        textMessage = "Added article: " + myArticle.articleTitle;
+        myLogger.debug("ADD RECORD: " + myArticle.articleTitle + " -- url: " + apiLocation + theUri);
         // USE WEBCLIENT TO SEND REQUEST AND RESOLVE RESPONSE
         WebClient myWebClient = WebClient.create(apiLocation);
+        Article savedArticle = new Article();
         try {
-            Mono<Article> entityMono = myWebClient.post()
-                    .uri("/new")
+            savedArticle = myWebClient.post()
+                    .uri(theUri)
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(myArticle)
                     .retrieve()
                     .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("Internal server error: " + error.statusCode())))
-                    .bodyToMono(Article.class);
-            entityMono.block();
+                    .bodyToMono(Article.class).block();
+            textMessage = "Added article: " + savedArticle.getArticleTitle() + " -- ID: " + savedArticle.getArticleId();
         } catch (RuntimeException runtimeException) {
             textMessage = "Error while adding record: " + runtimeException.getMessage();
         } // TRY-CATCH
         aModel.addAttribute("textmessage", textMessage);
-        aModel.addAttribute("myarticle", myArticle);
+        aModel.addAttribute("myarticle", savedArticle);
         aModel.addAttribute("today", new Date().toString());
         return "index";
     } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
