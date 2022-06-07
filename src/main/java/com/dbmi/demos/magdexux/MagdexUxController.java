@@ -33,7 +33,7 @@ public class MagdexUxController {
 
     @RequestMapping("/")
     public String home(Model aModel, HttpServletRequest request) {
-        myLogger.trace("Requested root page.");
+        myLogger.debug("Requested root page.");
         request.getSession().invalidate();
         request.getSession(true);
         textMessage = "Welcome to the Magazine Article Index Entry Form. Add / Search / Find / Update magazine article references here.";
@@ -46,7 +46,7 @@ public class MagdexUxController {
 
     @RequestMapping("/newerror")
     public String error(Model aModel, HttpServletRequest request, String errorMessage) {
-        myLogger.trace("NEWERROR: requested.");
+        myLogger.debug("NEWERROR: requested.");
         textMessage = request.getParameter("errormessage" + errorMessage);
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("today", new Date().toString());
@@ -55,30 +55,31 @@ public class MagdexUxController {
 
     @RequestMapping("/findrecordbyid")
     public String findRecordById(Model aModel, HttpServletRequest request) {
+        Article theArticle = new Article();
         String theUri = "/find/id/";
-        myLogger.trace("FIND RECORD BY ID: requested.");
+        myLogger.debug("FIND RECORD BY ID: requested.");
         String idNum = request.getParameter("articleId");
-        myLogger.trace("FIND RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
+        myLogger.debug("FIND RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
         textMessage = "Found article id#: " + idNum;
         WebClient myWebClient = WebClient.create(apiLocation);
-        Mono<Article> entityMono = myWebClient.get()
+        theArticle = myWebClient.get()
                 .uri(theUri + idNum)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Article.class)
                 .timeout(Duration.ofMillis(5000))
                 .doOnError(error -> textMessage = "Unable to find requested article id#: " + idNum + " error: " + error.getMessage())
-                .onErrorReturn(new Article());
-        Article myArticle = entityMono.block();
+                .onErrorReturn(new Article()).block();
         aModel.addAttribute("textmessage", textMessage);
-        aModel.addAttribute("myarticle", myArticle);
+        aModel.addAttribute("myarticle", theArticle);
         aModel.addAttribute("today", new Date().toString());
         return "index";
     } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/findnextrecord")
     public String findnextrecord(Model aModel, HttpServletRequest request) {
-        int idNum = Integer.parseInt(request.getParameter("articleId"));
+        int idNum = Integer.parseInt(request.getParameter("articleId")) + 1;
+        myLogger.debug("FIND NEXT ID: " + idNum);
         return this.findRecordById(aModel,request);
     } // FINDNEXTRECORD(MODEL,HTTPSERVLETREQUEST)
 
@@ -105,7 +106,7 @@ public class MagdexUxController {
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(myArticle)
                     .retrieve()
-                    .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("Internal server error: " + error.statusCode())))
+                    .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
                     .bodyToMono(Article.class).block();
             textMessage = "Added article: " + savedArticle.getArticleTitle() + " -- ID: " + savedArticle.getArticleId();
         } catch (RuntimeException runtimeException) {
