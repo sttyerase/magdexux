@@ -58,7 +58,8 @@
                                th:method="post" th:formaction="@{/findnextrecord}" th:object="${myarticle}" /></td>
                     <td><input form="dataentryform" class="buttoninput" id="addbutton" type="submit" value="ADD"
                                th:method="post" th:formaction="@{/addrecord}" th:object="${myarticle}"/></td>
-                    <td><input form="dataentryform" class="buttoninput" id="updatebutton" type="button" value="UPDATE"/></td>
+                    <td><input form="dataentryform" class="buttoninput" id="updatebutton" type="submit" value="UPDATE"
+                               th:method="put" th:formaction="@{/updaterecord}" th:object="${myarticle}"/></td>
                     <td><input form="dataentryform" class="buttoninput" id="deletebutton" type="button" value="DELETE"/></td>
                 </tr>
                 </tbody>

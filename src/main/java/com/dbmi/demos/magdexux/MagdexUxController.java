@@ -118,4 +118,41 @@ public class MagdexUxController {
         return "index";
     } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
+    @RequestMapping("/updaterecord")
+    public String updateRecord(Model aModel, HttpServletRequest request) {
+        String theUri = "/update/";
+        myLogger.debug("UPDATE RECORD BY ID: requested.");
+        Article myArticle = new Article();
+        String idNum = request.getParameter("articleId");
+        myLogger.debug("UPDATE RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
+        // GET THE INPUT VALUES FROM THE FORM
+        myArticle.articleTitle = request.getParameter("articleTitle");
+        myArticle.articleAuthor = request.getParameter("articleAuthor");
+        myArticle.articleSynopsis = request.getParameter("articleSynopsis");
+        myArticle.articleCategory = request.getParameter("articleCategory");
+        myArticle.articleKeywords = request.getParameter("articleKeywords");
+        myArticle.articleMonth = Integer.parseInt(request.getParameter("articleMonth"));
+        myArticle.articleYear = Integer.parseInt(request.getParameter("articleYear"));
+        myLogger.debug("UPDATE RECORD: " + myArticle.articleTitle + " -- url: " + apiLocation + theUri);
+        // USE WEBCLIENT TO SEND REQUEST AND RESOLVE RESPONSE
+        WebClient myWebClient = WebClient.create(apiLocation);
+        Article savedArticle = new Article();
+        try {
+            savedArticle = myWebClient.put()
+                    .uri(theUri + idNum)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(myArticle)
+                    .retrieve()
+                    .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
+                    .bodyToMono(Article.class).block();
+            textMessage = "Updated article: " + savedArticle.getArticleTitle() + " -- ID: " + savedArticle.getArticleId();
+        } catch (RuntimeException runtimeException) {
+            textMessage = "Error while updating record: " + runtimeException.getMessage();
+        } // TRY-CATCH
+        aModel.addAttribute("textmessage", textMessage);
+        aModel.addAttribute("myarticle", savedArticle);
+        aModel.addAttribute("today", new Date().toString());
+        return "index";
+    } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+
 } // CLASS
