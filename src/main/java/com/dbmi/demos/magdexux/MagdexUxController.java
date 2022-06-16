@@ -37,21 +37,11 @@ public class MagdexUxController {
         request.getSession().invalidate();
         request.getSession(true);
         textMessage = "Welcome to the Magazine Article Index Entry Form. Add / Search / Find / Update magazine article references here.";
-        // myArticle = myGson.fromJson(jsonString,Article.class); // EXAMPLE USING GSON
         aModel.addAttribute("myarticle", new Article());
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("today", new Date().toString());
         return "index";
-    } // HOME
-
-    @RequestMapping("/newerror")
-    public String error(Model aModel, HttpServletRequest request, String errorMessage) {
-        myLogger.debug("NEWERROR: requested.");
-        textMessage = request.getParameter("errormessage" + errorMessage);
-        aModel.addAttribute("textmessage", textMessage);
-        aModel.addAttribute("today", new Date().toString());
-        return "error";
-    } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+    } // HOME(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/findrecordbyid")
     public String findRecordById(Model aModel, HttpServletRequest request) {
@@ -74,7 +64,30 @@ public class MagdexUxController {
         aModel.addAttribute("myarticle", theArticle);
         aModel.addAttribute("today", new Date().toString());
         return "index";
-    } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+    } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+
+    @RequestMapping("/findrecordbytitle")
+    public String findRecordByTitle(Model aModel, HttpServletRequest request) {
+        Article theArticle = new Article();
+        String theUri = "/find/title/";
+        myLogger.debug("FIND RECORD BY TITLE: requested.");
+        String title = request.getParameter("articleTitle");
+        myLogger.debug("FIND RECORD BY TITLE url: " + apiLocation + "/find/title/" + title);
+        textMessage = "Found article title: " + title;
+        WebClient myWebClient = WebClient.create(apiLocation);
+        theArticle = myWebClient.get()
+                .uri(theUri + title)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Article.class)
+                .timeout(Duration.ofMillis(5000))
+                .doOnError(error -> textMessage = "Unable to find requested article title#: " + title + " error: " + error.getMessage())
+                .onErrorReturn(new Article()).block();
+        aModel.addAttribute("textmessage", textMessage);
+        aModel.addAttribute("myarticle", theArticle);
+        aModel.addAttribute("today", new Date().toString());
+        return "index";
+    } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/findnextrecord")
     public String findnextrecord(Model aModel, HttpServletRequest request) {
@@ -116,7 +129,7 @@ public class MagdexUxController {
         aModel.addAttribute("myarticle", savedArticle);
         aModel.addAttribute("today", new Date().toString());
         return "index";
-    } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+    } // ADDRECORD(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/updaterecord")
     public String updateRecord(Model aModel, HttpServletRequest request) {
@@ -153,6 +166,25 @@ public class MagdexUxController {
         aModel.addAttribute("myarticle", savedArticle);
         aModel.addAttribute("today", new Date().toString());
         return "index";
-    } // ERROR(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+    } // UPDATERECORD(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
+    @RequestMapping("/deleterecordbyid")
+    public String deleteRecordById(Model aModel, HttpServletRequest request) {
+        Article delArticle = new Article();
+        String theUri = "/delete/id/";
+        myLogger.debug("DELETE RECORD: requested.");
+        String idNum = request.getParameter("articleId");
+        myLogger.debug("DELETE RECORD BY ID url: " + apiLocation + "/delete/id/" + idNum);
+        textMessage = "Deleted article id#: " + idNum;
+        WebClient myWebClient = WebClient.create(apiLocation);
+        delArticle = myWebClient.delete()
+                .uri(theUri + idNum)
+                .retrieve()
+                .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
+                .bodyToMono(Article.class).block();
+        aModel.addAttribute("textmessage", textMessage);
+        aModel.addAttribute("myarticle", delArticle);
+        aModel.addAttribute("today", new Date().toString());
+        return "index";
+    } // DELETERECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 } // CLASS

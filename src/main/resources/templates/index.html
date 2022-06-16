@@ -50,8 +50,12 @@
             <table>
                 <tbody>
                 <tr class="buttonrow">
-                    <td><input form="dataentryform" class="buttoninput" id="findbutton" type="submit" value="FIND BY ID"
+                    <td><input form="dataentryform" class="buttoninput" id="clearformbutton" type="submit" value="CLEAR FORM"
+                               th:method="post" th:formaction="@{/}" th:object="${myarticle}" /></td>
+                    <td><input form="dataentryform" class="buttoninput" id="findidbutton" type="submit" value="FIND BY ID"
                                th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}" /></td>
+                    <td><input form="dataentryform" class="buttoninput" id="findtitlebutton" type="submit" value="FIND BY TITLE"
+                               th:method="post" th:formaction="@{/findrecordbytitle}" th:object="${myarticle}" /></td>
                     <td><input form="dataentryform" class="buttoninput" id="prevbutton" type="submit" value="FIND PREV"
                                th:method="post" th:formaction="@{/findpreviousrecord}" th:object="${myarticle}" /></td>
                     <td><input form="dataentryform" class="buttoninput" id="nextbutton" type="submit" value="FIND NEXT"
@@ -60,7 +64,8 @@
                                th:method="post" th:formaction="@{/addrecord}" th:object="${myarticle}"/></td>
                     <td><input form="dataentryform" class="buttoninput" id="updatebutton" type="submit" value="UPDATE"
                                th:method="put" th:formaction="@{/updaterecord}" th:object="${myarticle}"/></td>
-                    <td><input form="dataentryform" class="buttoninput" id="deletebutton" type="button" value="DELETE"/></td>
+                    <td><input form="dataentryform" class="buttoninput" id="deletebutton" type="submit" value="DELETE"
+                               th:method="put" th:formaction="@{/deleterecordbyid}" th:object="${myarticle}"/></td>
                 </tr>
                 </tbody>
             </table>
