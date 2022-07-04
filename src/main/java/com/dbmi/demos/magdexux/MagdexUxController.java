@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Controller
@@ -23,6 +24,7 @@ public class MagdexUxController {
     private String textMessage = "Text message goes here.";
     @Value("${magdex.api.location}")
     private String apiLocation;
+    private ArrayList<Article> articleList;
 
     @Bean
     public ResourceBundleMessageSource messageSource() {
@@ -33,18 +35,24 @@ public class MagdexUxController {
 
     @RequestMapping("/")
     public String home(Model aModel, HttpServletRequest request) {
+        textMessage = "Form cleared.";
+        articleList = new ArrayList<>(100);
         myLogger.debug("Requested root page.");
+        if(request.getSession().isNew()) {
+            textMessage = "Welcome to the Magazine Article Index Entry Form. Add / Search / Find / Update magazine article references here.";
+        } // IF
         request.getSession().invalidate();
         request.getSession(true);
-        textMessage = "Welcome to the Magazine Article Index Entry Form. Add / Search / Find / Update magazine article references here.";
         aModel.addAttribute("myarticle", new Article());
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",articleList);
         return "index";
-    } // HOME(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+    } // HOME(MODEL,HTTPSERVLETREQUEST)
 
     @RequestMapping("/findrecordbyid")
     public String findRecordById(Model aModel, HttpServletRequest request) {
+        articleList.clear();
         Article theArticle = new Article();
         String theUri = "/find/id/";
         myLogger.debug("FIND RECORD BY ID: requested.");
@@ -60,14 +68,17 @@ public class MagdexUxController {
                 .timeout(Duration.ofMillis(5000))
                 .doOnError(error -> textMessage = "Unable to find requested article id#: " + idNum + " error: " + error.getMessage())
                 .onErrorReturn(new Article()).block();
+        articleList.add(theArticle);
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", theArticle);
         aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",articleList);
         return "index";
     } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/findrecordbytitle")
     public String findRecordByTitle(Model aModel, HttpServletRequest request) {
+        articleList.clear();
         Article theArticle = new Article();
         String theUri = "/find/title/";
         myLogger.debug("FIND RECORD BY TITLE: requested.");
@@ -83,21 +94,17 @@ public class MagdexUxController {
                 .timeout(Duration.ofMillis(5000))
                 .doOnError(error -> textMessage = "Unable to find requested article title#: " + title + " error: " + error.getMessage())
                 .onErrorReturn(new Article()).block();
+        articleList.add(theArticle);
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", theArticle);
         aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",articleList);
         return "index";
     } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
-    @RequestMapping("/findnextrecord")
-    public String findnextrecord(Model aModel, HttpServletRequest request) {
-        int idNum = Integer.parseInt(request.getParameter("articleId")) + 1;
-        myLogger.debug("FIND NEXT ID: " + idNum);
-        return this.findRecordById(aModel,request);
-    } // FINDNEXTRECORD(MODEL,HTTPSERVLETREQUEST)
-
     @RequestMapping("/addrecord")
     public String addRecord(Model aModel, HttpServletRequest request) {
+        articleList.clear();
         String theUri = "/new";
         myLogger.debug("ADD RECORD: requested.");
         Article myArticle = new Article();
@@ -125,14 +132,17 @@ public class MagdexUxController {
         } catch (RuntimeException runtimeException) {
             textMessage = "Error while adding record: " + runtimeException.getMessage();
         } // TRY-CATCH
+        articleList.add(savedArticle);
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", savedArticle);
         aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",articleList);
         return "index";
     } // ADDRECORD(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/updaterecord")
     public String updateRecord(Model aModel, HttpServletRequest request) {
+        articleList.clear();
         String theUri = "/update/";
         myLogger.debug("UPDATE RECORD BY ID: requested.");
         Article myArticle = new Article();
@@ -162,14 +172,17 @@ public class MagdexUxController {
         } catch (RuntimeException runtimeException) {
             textMessage = "Error while updating record: " + runtimeException.getMessage();
         } // TRY-CATCH
+        articleList.add(savedArticle);
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", savedArticle);
         aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",articleList);
         return "index";
     } // UPDATERECORD(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/deleterecordbyid")
     public String deleteRecordById(Model aModel, HttpServletRequest request) {
+        articleList.clear();
         Article delArticle = new Article();
         String theUri = "/delete/id/";
         myLogger.debug("DELETE RECORD: requested.");
@@ -182,9 +195,11 @@ public class MagdexUxController {
                 .retrieve()
                 .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
                 .bodyToMono(Article.class).block();
+        articleList.add(delArticle);
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", delArticle);
         aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",articleList);
         return "index";
     } // DELETERECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 } // CLASS

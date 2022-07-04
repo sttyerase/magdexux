@@ -2,12 +2,32 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Welcome: Magazine Index Entry Form</title>
+    <title>Welcome: Magazine Index Management Form</title>
     <!-- th:href must use leading / in path definition. -->
     <link href="../static/css/Site.css" th:href="@{/css/Site.css}" rel="stylesheet" media="screen"/>
 </head>
 <body>
 <h2>Magazine Index Entry Form</h2>
+<div id="datarowsdiv">
+  <table>
+      <thead>
+          <tr>
+              <td class="header">ID</td>
+              <td class="header">TITLE</td>
+              <td class="header">AUTHOR</td>
+              <td class="header">CATEGORY</td>
+          </tr>
+      </thead>
+      <tbody>
+          <tr th:each="art: ${myarticlelist}">
+              <td th:text="${{art.articleId}}">id</td>
+              <td th:text="${{art.articleTitle}}">title</td>
+              <td th:text="${{art.articleAuthor}}">author</td>
+              <td th:text="${{art.articleCategory}}">category</td>
+          </tr>
+      </tbody>
+  </table>
+</div>
 <div id="dataentrydiv" class="boxed">
     <form id="dataentryform" name="dataentryform">
         <table id="dataentrytable">
@@ -56,10 +76,6 @@
                                th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}" /></td>
                     <td><input form="dataentryform" class="buttoninput" id="findtitlebutton" type="submit" value="FIND BY TITLE"
                                th:method="post" th:formaction="@{/findrecordbytitle}" th:object="${myarticle}" /></td>
-                    <td><input form="dataentryform" class="buttoninput" id="prevbutton" type="submit" value="FIND PREV"
-                               th:method="post" th:formaction="@{/findpreviousrecord}" th:object="${myarticle}" /></td>
-                    <td><input form="dataentryform" class="buttoninput" id="nextbutton" type="submit" value="FIND NEXT"
-                               th:method="post" th:formaction="@{/findnextrecord}" th:object="${myarticle}" /></td>
                     <td><input form="dataentryform" class="buttoninput" id="addbutton" type="submit" value="ADD"
                                th:method="post" th:formaction="@{/addrecord}" th:object="${myarticle}"/></td>
                     <td><input form="dataentryform" class="buttoninput" id="updatebutton" type="submit" value="UPDATE"

@@ -69,3 +69,9 @@ h1,h2 {
 #articleId {
     width: 100px;
 }
+
+.header {
+    font-weight: bold;
+    text-align: center;
+    background-color: aqua;
+}
