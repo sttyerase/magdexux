@@ -75,3 +75,12 @@ h1,h2 {
     text-align: center;
     background-color: aqua;
 }
+
+#datarowstable {
+    display: block;
+    height: 200px;
+    overflow: auto;
+    width: 98%;
+    font-max-size: xx-small;
+}
+

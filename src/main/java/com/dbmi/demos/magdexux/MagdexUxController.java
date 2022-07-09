@@ -1,5 +1,6 @@
 package com.dbmi.demos.magdexux;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,8 +16,8 @@ import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class MagdexUxController {
@@ -24,7 +25,8 @@ public class MagdexUxController {
     private String textMessage = "Text message goes here.";
     @Value("${magdex.api.location}")
     private String apiLocation;
-    private ArrayList<Article> articleList;
+    private ArrayList<Article> articleList = new ArrayList<>(100);
+    private List<Article> aList = new Stack<>();
 
     @Bean
     public ResourceBundleMessageSource messageSource() {
@@ -36,13 +38,13 @@ public class MagdexUxController {
     @RequestMapping("/")
     public String home(Model aModel, HttpServletRequest request) {
         textMessage = "Form cleared.";
-        articleList = new ArrayList<>(100);
+        articleList.clear();
         myLogger.debug("Requested root page.");
+        request.getSession().invalidate();
+        request.getSession(true);
         if(request.getSession().isNew()) {
             textMessage = "Welcome to the Magazine Article Index Entry Form. Add / Search / Find / Update magazine article references here.";
         } // IF
-        request.getSession().invalidate();
-        request.getSession(true);
         aModel.addAttribute("myarticle", new Article());
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("today", new Date().toString());
@@ -101,6 +103,50 @@ public class MagdexUxController {
         aModel.addAttribute("myarticlelist",articleList);
         return "index";
     } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+
+    @RequestMapping("/findrecordslike")
+    public String findRecordsLike(Model aModel, HttpServletRequest request) {
+        articleList.clear();
+        String theUri = "/find/like";
+        myLogger.debug("FIND RECORDS LIKE: requested.");
+        Article exampleArticle = new Article();
+        Object[] returnedObjects = new Object[50000]; // TODO: FIX THIS
+        ObjectMapper myMapper = new ObjectMapper();
+        // GET THE INPUT VALUES FROM THE FORM
+        exampleArticle.articleTitle = request.getParameter("articleTitle");
+        exampleArticle.articleAuthor = request.getParameter("articleAuthor");
+        exampleArticle.articleSynopsis = request.getParameter("articleSynopsis");
+        exampleArticle.articleCategory = request.getParameter("articleCategory");
+        exampleArticle.articleKeywords = request.getParameter("articleKeywords");
+        exampleArticle.articleMonth = Integer.parseInt(request.getParameter("articleMonth"));
+        exampleArticle.articleYear = Integer.parseInt(request.getParameter("articleYear"));
+        myLogger.debug("FIND RECORDS LIKE: " + exampleArticle.articleTitle + " -- url: " + apiLocation + theUri);
+        // USE WEBCLIENT TO SEND REQUEST AND RESOLVE RESPONSE
+        WebClient myWebClient = WebClient.create(apiLocation);
+        try {
+            Mono<Object[]> myMono = myWebClient.post()
+                    .uri(theUri)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(exampleArticle)
+                    .retrieve()
+                    .bodyToMono(Object[].class)
+                    .doOnError(throwable -> textMessage = "System error finding values: " + throwable.getMessage())
+                    .log();
+            returnedObjects = myMono.block();
+            exampleArticle.articleId = returnedObjects.length;
+            textMessage = "Found records like: " + exampleArticle.getArticleId();
+        } catch (RuntimeException runtimeException) {
+            textMessage = "Error finding recors like: " + runtimeException.getMessage();
+        } // TRY-CATCH
+        aList = Arrays.stream(returnedObjects)
+                        .map(object -> myMapper.convertValue(object,Article.class))
+                                .collect(Collectors.toList());
+        aModel.addAttribute("textmessage", textMessage);
+        aModel.addAttribute("myarticle", exampleArticle);
+        aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",aList);
+        return "index";
+    } // FINDRECORDSLIKE(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/addrecord")
     public String addRecord(Model aModel, HttpServletRequest request) {

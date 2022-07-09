@@ -9,21 +9,25 @@
 <body>
 <h2>Magazine Index Entry Form</h2>
 <div id="datarowsdiv">
-  <table>
+  <table id="datarowstable">
       <thead>
           <tr>
               <td class="header">ID</td>
               <td class="header">TITLE</td>
               <td class="header">AUTHOR</td>
               <td class="header">CATEGORY</td>
+              <td class="header">MONTH</td>
+              <td class="header">YEAR</td>
           </tr>
       </thead>
-      <tbody>
+      <tbody id="datarowstbody">
           <tr th:each="art: ${myarticlelist}">
               <td th:text="${{art.articleId}}">id</td>
               <td th:text="${{art.articleTitle}}">title</td>
               <td th:text="${{art.articleAuthor}}">author</td>
               <td th:text="${{art.articleCategory}}">category</td>
+              <td th:text="${{art.articleMonth}}">id</td>
+              <td th:text="${{art.articleYear}}">id</td>
           </tr>
       </tbody>
   </table>
@@ -76,6 +80,8 @@
                                th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}" /></td>
                     <td><input form="dataentryform" class="buttoninput" id="findtitlebutton" type="submit" value="FIND BY TITLE"
                                th:method="post" th:formaction="@{/findrecordbytitle}" th:object="${myarticle}" /></td>
+                    <td><input form="dataentryform" class="buttoninput" id="findlikebutton" type="submit" value="FIND LIKE"
+                               th:method="post" th:formaction="@{/findrecordslike}" th:object="${myarticlelist}" /></td>
                     <td><input form="dataentryform" class="buttoninput" id="addbutton" type="submit" value="ADD"
                                th:method="post" th:formaction="@{/addrecord}" th:object="${myarticle}"/></td>
                     <td><input form="dataentryform" class="buttoninput" id="updatebutton" type="submit" value="UPDATE"
