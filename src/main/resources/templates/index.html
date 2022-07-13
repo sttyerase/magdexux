@@ -8,26 +8,26 @@
 </head>
 <body>
 <h2>Magazine Index Entry Form</h2>
-<div id="datarowsdiv">
+<div id="datarowsdiv" class="boxed">
   <table id="datarowstable">
       <thead>
           <tr>
-              <td class="header">ID</td>
-              <td class="header">TITLE</td>
-              <td class="header">AUTHOR</td>
-              <td class="header">CATEGORY</td>
-              <td class="header">MONTH</td>
-              <td class="header">YEAR</td>
+              <td class="theader" id="aid">ID</td>
+              <td class="theader" id="atitle">TITLE</td>
+              <td class="theader" id="aauthor">AUTHOR</td>
+              <td class="theader" id="acategory">CATEGORY</td>
+              <td class="theader" id="amonth">MONTH</td>
+              <td class="theader" id="ayear">YEAR</td>
           </tr>
       </thead>
       <tbody id="datarowstbody">
           <tr th:each="art: ${myarticlelist}">
-              <td th:text="${{art.articleId}}">id</td>
+              <td th:text="${{art.articleId}}" class="righttext">id</td>
               <td th:text="${{art.articleTitle}}">title</td>
               <td th:text="${{art.articleAuthor}}">author</td>
               <td th:text="${{art.articleCategory}}">category</td>
-              <td th:text="${{art.articleMonth}}">id</td>
-              <td th:text="${{art.articleYear}}">id</td>
+              <td th:text="${{art.articleMonth}}" class="righttext">id</td>
+              <td th:text="${{art.articleYear}}" class="righttext">id</td>
           </tr>
       </tbody>
   </table>
@@ -38,7 +38,8 @@
             <tbody>
             <tr>
                 <td class="aLabel"><label for="articleId">Article Id: </label></td>
-                <td class="aText"><input type="text" class="magtext" id="articleId" name="articleid" form="dataentryform" th:field="*{myarticle.articleId}"/></td>
+                <td class="aText"><input type="text" class="magtext righttext" id="articleId" name="articleid" form="dataentryform"
+                                         data-lpignore="true" th:field="*{myarticle.articleId}"/></td>
             </tr>
             <tr>
                 <td class="aLabel"><label for="articleTitle">Article Title: </label></td>
@@ -98,7 +99,7 @@
     <label id="messagetextarealabel" for="messagetextarea">MESSAGES: </label>
     <textarea id="messagetextarea" class="boxed" th:text="${textmessage}"></textarea>
 </div>
-<div class="datetimefooter">
+<div id="datetimefooterdiv">
     <table id="datetimetable">
         <tbody>
         <tr>
