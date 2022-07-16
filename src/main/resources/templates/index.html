@@ -33,50 +33,48 @@
   </table>
 </div>
 <div id="dataentrydiv" class="boxed">
-    <form id="dataentryform" name="dataentryform">
+    <form id="dataentryform" name="dataentryform" method="post">
         <table id="dataentrytable">
             <tbody>
             <tr>
-                <td class="aLabel"><label for="articleId">Article Id: </label></td>
-                <td class="aText"><input type="text" class="magtext righttext" id="articleId" name="articleid" form="dataentryform"
-                                         data-lpignore="true" th:field="*{myarticle.articleId}"/></td>
+                <td class="dataEntryLabel"><label for="articleId">Article Id: </label></td>
+                <td class="dataEntryText"><input type="text" class="magtext righttext" id="articleId" name="articleid" form="dataentryform"
+                                                 data-lpignore="true" th:field="*{myarticle.articleId}"/></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleTitle">Article Title: </label></td>
-                <td class="aText"><input type="text" class="magtext" id="articleTitle" th:field="*{myarticle.articleTitle}"></td>
+                <td class="dataEntryLabel"><label for="articleTitle">Article Title: </label></td>
+                <td class="dataEntryText"><input type="text" class="magtext" id="articleTitle" th:field="*{myarticle.articleTitle}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleAuthor">Article Author: </label></td>
-                <td class="aText"><input type="text" class="magtext" id="articleAuthor" th:field="*{myarticle.articleAuthor}"></td>
+                <td class="dataEntryLabel"><label for="articleAuthor">Article Author: </label></td>
+                <td class="dataEntryText"><input type="text" class="magtext" id="articleAuthor" th:field="*{myarticle.articleAuthor}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleSynopsis">Article Synopsis: </label></td>
-                <td class="aText"><input type="text" class="magtext" id="articleSynopsis" th:field="*{myarticle.articleSynopsis}"></td>
+                <td class="dataEntryLabel"><label for="articleSynopsis">Article Synopsis: </label></td>
+                <td class="dataEntryText"><input type="text" class="magtext" id="articleSynopsis" th:field="*{myarticle.articleSynopsis}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleCategory">Article Category: </label></td>
-                <td class="aText"><input type="text" class="magtext" id="articleCategory" th:field="*{myarticle.articleCategory}"></td>
+                <td class="dataEntryLabel"><label for="articleCategory">Article Category: </label></td>
+                <td class="dataEntryText"><input type="text" class="magtext" id="articleCategory" th:field="*{myarticle.articleCategory}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleKeywords">Article Keywords: </label></td>
-                <td class="aText"><input type="text" class="magtext" id="articleKeywords" th:field="${myarticle.articleKeywords}"></td>
+                <td class="dataEntryLabel"><label for="articleKeywords">Article Keywords: </label></td>
+                <td class="dataEntryText"><input type="text" class="magtext" id="articleKeywords" th:field="${myarticle.articleKeywords}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleMonth">Article Month: </label></td>
-                <td class="aText"><input type="text" class="magtext" id="articleMonth" th:field="${myarticle.articleMonth}"></td>
+                <td class="dataEntryLabel"><label for="articleMonth">Article Month: </label></td>
+                <td class="dataEntryText"><input type="text" class="magtext" id="articleMonth" th:field="${myarticle.articleMonth}"></td>
             </tr>
             <tr>
-                <td class="aLabel"><label for="articleYear">Article Year: </label></td>
-                <td class="aText"><input type="text" class="magtext" id="articleYear" th:field="*{myarticle.articleYear}"></td>
+                <td class="dataEntryLabel"><label for="articleYear">Article Year: </label></td>
+                <td class="dataEntryText"><input type="text" class="magtext" id="articleYear" th:field="*{myarticle.articleYear}"></td>
             </tr>
             </tbody>
         </table>
         <div id="buttondiv" class="boxed">
-            <table>
+            <table id="buttontable">
                 <tbody>
                 <tr class="buttonrow">
-                    <td><input form="dataentryform" class="buttoninput" id="clearformbutton" type="submit" value="CLEAR FORM"
-                               th:method="post" th:formaction="@{/}" th:object="${myarticle}" /></td>
                     <td><input form="dataentryform" class="buttoninput" id="findidbutton" type="submit" value="FIND BY ID"
                                th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}" /></td>
                     <td><input form="dataentryform" class="buttoninput" id="findtitlebutton" type="submit" value="FIND BY TITLE"
@@ -89,6 +87,17 @@
                                th:method="put" th:formaction="@{/updaterecord}" th:object="${myarticle}"/></td>
                     <td><input form="dataentryform" class="buttoninput" id="deletebutton" type="submit" value="DELETE"
                                th:method="put" th:formaction="@{/deleterecordbyid}" th:object="${myarticle}"/></td>
+                </tr>
+                <tr class="buttonrow">
+                    <td><input form="dataentryform" class="buttoninput" id="clearformbutton" type="submit" value="CLEAR FORM"
+                               th:method="post" th:formaction="@{/}" th:object="${myarticle}" /></td>
+                    <td><input form="dataentryform" class="buttoninput" id="previousbutton" type="submit" value="PREVIOUS"
+                               th:method="post" th:formaction="@{/}" th:object="${myarticle}" /></td>
+                    <td><input form="dataentryform" class="buttoninput" id="nextbutton" type="submit" value="NEXT"
+                               th:method="post" th:formaction="@{/}" th:object="${myarticle}" /></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
                 </tbody>
             </table>
