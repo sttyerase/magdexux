@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +26,7 @@ public class MagdexUxController {
     private String textMessage = "Text message goes here.";
     @Value("${magdex.api.location}")
     private String apiLocation;
-    private ArrayList<Article> articleList = new ArrayList<>(100);
+    private final ArrayList<Article> articleList = new ArrayList<>(100);
     private List<Article> aList = new Stack<>();
 
     @Bean
@@ -55,7 +56,7 @@ public class MagdexUxController {
     @RequestMapping("/findrecordbyid")
     public String findRecordById(Model aModel, HttpServletRequest request) {
         articleList.clear();
-        Article theArticle = new Article();
+        Article theArticle;
         String theUri = "/find/id/";
         myLogger.debug("FIND RECORD BY ID: requested.");
         String idNum = request.getParameter("articleId");
@@ -81,7 +82,7 @@ public class MagdexUxController {
     @RequestMapping("/findrecordbytitle")
     public String findRecordByTitle(Model aModel, HttpServletRequest request) {
         articleList.clear();
-        Article theArticle = new Article();
+        Article theArticle;
         String theUri = "/find/title/";
         myLogger.debug("FIND RECORD BY TITLE: requested.");
         String title = request.getParameter("articleTitle");
@@ -106,11 +107,11 @@ public class MagdexUxController {
 
     @RequestMapping("/findrecordslike")
     public String findRecordsLike(Model aModel, HttpServletRequest request) {
+        myLogger.debug("FIND RECORDS LIKE: requested.");
         articleList.clear();
         String theUri = "/find/like";
-        myLogger.debug("FIND RECORDS LIKE: requested.");
         Article exampleArticle = new Article();
-        Object[] returnedObjects = new Object[50000]; // TODO: FIX THIS
+        Object[] returnedObjects = new Object[1];
         ObjectMapper myMapper = new ObjectMapper();
         // GET THE INPUT VALUES FROM THE FORM
         exampleArticle.articleTitle = request.getParameter("articleTitle");
@@ -130,17 +131,24 @@ public class MagdexUxController {
                     .bodyValue(exampleArticle)
                     .retrieve()
                     .bodyToMono(Object[].class)
+                    .timeout(Duration.ofMillis(5000))
                     .doOnError(throwable -> textMessage = "System error finding values: " + throwable.getMessage())
+                    .onErrorReturn(returnedObjects)
                     .log();
             returnedObjects = myMono.block();
-            exampleArticle.articleId = returnedObjects.length;
-            textMessage = "Found records like: " + exampleArticle.getArticleId();
+        } catch (WebClientRequestException wre) {
+            textMessage = "Error in web client: " + wre.getMessage();
         } catch (RuntimeException runtimeException) {
-            textMessage = "Error finding recors like: " + runtimeException.getMessage();
+            textMessage = "Error finding records like: " + runtimeException.getMessage();
         } // TRY-CATCH
-        aList = Arrays.stream(returnedObjects)
-                        .map(object -> myMapper.convertValue(object,Article.class))
-                                .collect(Collectors.toList());
+        if (returnedObjects[0] == null) {
+            textMessage = "No articles returned from query.";
+        } else {
+            aList = Arrays.stream(returnedObjects)
+                    .map(object -> myMapper.convertValue(object, Article.class))
+                    .collect(Collectors.toList());
+            textMessage = "Found " + aList.size() + " records like query.";
+        } // IF-ELSE
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", exampleArticle);
         aModel.addAttribute("today", new Date().toString());
@@ -229,7 +237,7 @@ public class MagdexUxController {
     @RequestMapping("/deleterecordbyid")
     public String deleteRecordById(Model aModel, HttpServletRequest request) {
         articleList.clear();
-        Article delArticle = new Article();
+        Article delArticle;
         String theUri = "/delete/id/";
         myLogger.debug("DELETE RECORD: requested.");
         String idNum = request.getParameter("articleId");
