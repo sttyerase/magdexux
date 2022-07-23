@@ -40,6 +40,7 @@ public class MagdexUxController {
     public String home(Model aModel, HttpServletRequest request) {
         textMessage = "Form cleared.";
         articleList.clear();
+        aList.clear();
         myLogger.debug("Requested root page.");
         request.getSession().invalidate();
         request.getSession(true);
@@ -56,6 +57,7 @@ public class MagdexUxController {
     @RequestMapping("/findrecordbyid")
     public String findRecordById(Model aModel, HttpServletRequest request) {
         articleList.clear();
+        aList.clear();
         Article theArticle;
         String theUri = "/find/id/";
         myLogger.debug("FIND RECORD BY ID: requested.");
@@ -82,6 +84,7 @@ public class MagdexUxController {
     @RequestMapping("/findrecordbytitle")
     public String findRecordByTitle(Model aModel, HttpServletRequest request) {
         articleList.clear();
+        aList.clear();
         Article theArticle;
         String theUri = "/find/title/";
         myLogger.debug("FIND RECORD BY TITLE: requested.");
@@ -109,6 +112,7 @@ public class MagdexUxController {
     public String findRecordsLike(Model aModel, HttpServletRequest request) {
         myLogger.debug("FIND RECORDS LIKE: requested.");
         articleList.clear();
+        aList.clear();
         String theUri = "/find/like";
         Article exampleArticle = new Article();
         Object[] returnedObjects = new Object[1];
@@ -150,7 +154,7 @@ public class MagdexUxController {
             textMessage = "Found " + aList.size() + " records like query.";
         } // IF-ELSE
         aModel.addAttribute("textmessage", textMessage);
-        aModel.addAttribute("myarticle", exampleArticle);
+        aModel.addAttribute("myarticle", aList.get(0));
         aModel.addAttribute("today", new Date().toString());
         aModel.addAttribute("myarticlelist",aList);
         return "index";
@@ -159,6 +163,7 @@ public class MagdexUxController {
     @RequestMapping("/addrecord")
     public String addRecord(Model aModel, HttpServletRequest request) {
         articleList.clear();
+        aList.clear();
         String theUri = "/new";
         myLogger.debug("ADD RECORD: requested.");
         Article myArticle = new Article();
@@ -197,6 +202,7 @@ public class MagdexUxController {
     @RequestMapping("/updaterecord")
     public String updateRecord(Model aModel, HttpServletRequest request) {
         articleList.clear();
+        aList.clear();
         String theUri = "/update/";
         myLogger.debug("UPDATE RECORD BY ID: requested.");
         Article myArticle = new Article();
@@ -237,6 +243,7 @@ public class MagdexUxController {
     @RequestMapping("/deleterecordbyid")
     public String deleteRecordById(Model aModel, HttpServletRequest request) {
         articleList.clear();
+        aList.clear();
         Article delArticle;
         String theUri = "/delete/id/";
         myLogger.debug("DELETE RECORD: requested.");
