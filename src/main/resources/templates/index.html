@@ -7,117 +7,130 @@
     <link href="../static/css/Site.css" th:href="@{/css/Site.css}" rel="stylesheet" media="screen"/>
 </head>
 <body>
-<h2>Magazine Index Entry Form</h2>
-<div id="datarowsdiv" class="boxed">
-  <table id="datarowstable">
-      <thead>
-          <tr>
-              <td class="theader" id="aid">ID</td>
-              <td class="theader" id="atitle">TITLE</td>
-              <td class="theader" id="aauthor">AUTHOR</td>
-              <td class="theader" id="acategory">CATEGORY</td>
-              <td class="theader" id="amonth">MONTH</td>
-              <td class="theader" id="ayear">YEAR</td>
-          </tr>
-      </thead>
-      <tbody id="datarowstbody">
-          <tr th:each="art: ${myarticlelist}">
-              <td th:text="${{art.articleId}}" class="righttext">id</td>
-              <td th:text="${{art.articleTitle}}">title</td>
-              <td th:text="${{art.articleAuthor}}">author</td>
-              <td th:text="${{art.articleCategory}}">category</td>
-              <td th:text="${{art.articleMonth}}" class="righttext">id</td>
-              <td th:text="${{art.articleYear}}" class="righttext">id</td>
-          </tr>
-      </tbody>
-  </table>
-</div>
-<div id="dataentrydiv" class="boxed">
-    <form id="dataentryform" name="dataentryform" method="post">
-        <table id="dataentrytable">
-            <tbody>
+<div id="wrapperdiv">
+    <h2>Magazine Index Entry Form</h2>
+    <div id="datarowsdiv" class="boxed">
+        <table id="datarowstable">
+            <thead>
             <tr>
-                <td class="dataEntryLabel"><label for="articleId">Article Id: </label></td>
-                <td class="dataEntryText"><input type="text" class="magtext righttext" id="articleId" name="articleid" form="dataentryform"
-                                                 data-lpignore="true" th:field="*{myarticle.articleId}"/></td>
+                <td class="theader" id="ahid">ID</td>
+                <td class="theader" id="ahtitle">TITLE</td>
+                <td class="theader" id="ahauthor">AUTHOR</td>
+                <td class="theader" id="ahcategory">CATEGORY</td>
+                <td class="theader" id="ahmonth">MONTH</td>
+                <td class="theader" id="ahyear">YEAR</td>
             </tr>
-            <tr>
-                <td class="dataEntryLabel"><label for="articleTitle">Article Title: </label></td>
-                <td class="dataEntryText"><input type="text" class="magtext" id="articleTitle" th:field="*{myarticle.articleTitle}"></td>
-            </tr>
-            <tr>
-                <td class="dataEntryLabel"><label for="articleAuthor">Article Author: </label></td>
-                <td class="dataEntryText"><input type="text" class="magtext" id="articleAuthor" th:field="*{myarticle.articleAuthor}"></td>
-            </tr>
-            <tr>
-                <td class="dataEntryLabel"><label for="articleSynopsis">Article Synopsis: </label></td>
-                <td class="dataEntryText"><input type="text" class="magtext" id="articleSynopsis" th:field="*{myarticle.articleSynopsis}"></td>
-            </tr>
-            <tr>
-                <td class="dataEntryLabel"><label for="articleCategory">Article Category: </label></td>
-                <td class="dataEntryText"><input type="text" class="magtext" id="articleCategory" th:field="*{myarticle.articleCategory}"></td>
-            </tr>
-            <tr>
-                <td class="dataEntryLabel"><label for="articleKeywords">Article Keywords: </label></td>
-                <td class="dataEntryText"><input type="text" class="magtext" id="articleKeywords" th:field="${myarticle.articleKeywords}"></td>
-            </tr>
-            <tr>
-                <td class="dataEntryLabel"><label for="articleMonth">Article Month: </label></td>
-                <td class="dataEntryText"><input type="text" class="magtext" id="articleMonth" th:field="${myarticle.articleMonth}"></td>
-            </tr>
-            <tr>
-                <td class="dataEntryLabel"><label for="articleYear">Article Year: </label></td>
-                <td class="dataEntryText"><input type="text" class="magtext" id="articleYear" th:field="*{myarticle.articleYear}"></td>
+            </thead>
+            <tbody id="datarowstbody">
+            <tr th:each="art: ${myarticlelist}">
+                <td id="arid" class="righttext" th:text="${{art.articleId}}">id</td>
+                <td id="artitle" th:text="${{art.articleTitle}}">title</td>
+                <td id="arauthor" th:text="${{art.articleAuthor}}">author</td>
+                <td id="arcategory" th:text="${{art.articleCategory}}">category</td>
+                <td id="armonth" class="righttext" th:text="${{art.articleMonth}}">id</td>
+                <td id="aryear" class="righttext" th:text="${{art.articleYear}}">id</td>
             </tr>
             </tbody>
         </table>
-        <div id="buttondiv" class="boxed">
-            <table id="buttontable">
+    </div>
+    <div id="dataentrydiv" class="boxed">
+        <form id="dataentryform" name="dataentryform" method="post">
+            <table id="dataentrytable">
                 <tbody>
-                <tr class="buttonrow">
-                    <td><input form="dataentryform" class="buttoninput" id="findidbutton" type="submit" value="FIND BY ID"
-                               th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}" /></td>
-                    <td><input form="dataentryform" class="buttoninput" id="findtitlebutton" type="submit" value="FIND BY TITLE"
-                               th:method="post" th:formaction="@{/findrecordbytitle}" th:object="${myarticle}" /></td>
-                    <td><input form="dataentryform" class="buttoninput" id="findlikebutton" type="submit" value="FIND LIKE"
-                               th:method="post" th:formaction="@{/findrecordslike}" th:object="${myarticlelist}" /></td>
-                    <td><input form="dataentryform" class="buttoninput" id="addbutton" type="submit" value="ADD"
-                               th:method="post" th:formaction="@{/addrecord}" th:object="${myarticle}"/></td>
-                    <td><input form="dataentryform" class="buttoninput" id="updatebutton" type="submit" value="UPDATE"
-                               th:method="put" th:formaction="@{/updaterecord}" th:object="${myarticle}"/></td>
-                    <td><input form="dataentryform" class="buttoninput" id="deletebutton" type="submit" value="DELETE"
-                               th:method="put" th:formaction="@{/deleterecordbyid}" th:object="${myarticle}"/></td>
+                <tr>
+                    <td class="dataEntryLabel"><label for="articleId">Article Id: </label></td>
+                    <td class="dataEntryText"><input type="text" class="textfieldtext righttext" id="articleId"
+                                                     name="articleid" form="dataentryform"
+                                                     data-lpignore="true" th:field="*{myarticle.articleId}"/></td>
                 </tr>
-                <tr class="buttonrow">
-                    <td><input form="dataentryform" class="buttoninput" id="clearformbutton" type="submit" value="CLEAR FORM"
-                               th:method="post" th:formaction="@{/}" th:object="${myarticle}" /></td>
-                    <td><input form="dataentryform" class="buttoninput" id="previousbutton" type="submit" value="PREVIOUS"
-                               th:method="post" th:formaction="@{/}" th:object="${myarticle}" /></td>
-                    <td><input form="dataentryform" class="buttoninput" id="nextbutton" type="submit" value="NEXT"
-                               th:method="post" th:formaction="@{/}" th:object="${myarticle}" /></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                <tr>
+                    <td class="dataEntryLabel"><label for="articleTitle">Article Title: </label></td>
+                    <td class="dataEntryText"><input type="text" class="textfieldtext" id="articleTitle"
+                                                     data-lpignore="true" th:field="*{myarticle.articleTitle}"></td>
+                </tr>
+                <tr>
+                    <td class="dataEntryLabel"><label for="articleAuthor">Article Author: </label></td>
+                    <td class="dataEntryText"><input type="text" class="textfieldtext" id="articleAuthor"
+                                                     th:field="*{myarticle.articleAuthor}"></td>
+                </tr>
+                <tr>
+                    <td class="dataEntryLabel"><label for="articleSynopsis">Article Synopsis: </label></td>
+                    <td class="dataEntryText"><input type="text" class="textfieldtext" id="articleSynopsis"
+                                                     th:field="*{myarticle.articleSynopsis}"></td>
+                </tr>
+                <tr>
+                    <td class="dataEntryLabel"><label for="articleCategory">Article Category: </label></td>
+                    <td class="dataEntryText"><input type="text" class="textfieldtext" id="articleCategory"
+                                                     th:field="*{myarticle.articleCategory}"></td>
+                </tr>
+                <tr>
+                    <td class="dataEntryLabel"><label for="articleKeywords">Article Keywords: </label></td>
+                    <td class="dataEntryText"><input type="text" class="textfieldtext" id="articleKeywords"
+                                                     th:field="${myarticle.articleKeywords}"></td>
+                </tr>
+                <tr>
+                    <td class="dataEntryLabel"><label for="articleMonth">Article Month: </label></td>
+                    <td class="dataEntryText"><input type="text" class="textfieldtext" id="articleMonth"
+                                                     th:field="${myarticle.articleMonth}"></td>
+                </tr>
+                <tr>
+                    <td class="dataEntryLabel"><label for="articleYear">Article Year: </label></td>
+                    <td class="dataEntryText"><input type="text" class="textfieldtext" id="articleYear"
+                                                     th:field="*{myarticle.articleYear}"></td>
                 </tr>
                 </tbody>
             </table>
-        </div>
-    </form>
-</div>
-<div id="messagetextdiv">
-    <label id="messagetextarealabel" for="messagetextarea">MESSAGES: </label>
-    <textarea id="messagetextarea" class="boxed" th:text="${textmessage}"></textarea>
-</div>
-<div id="datetimefooterdiv">
-    <table id="datetimetable">
-        <tbody>
-        <tr>
-            <td class="dtfirstcol"  th:text="#{welcomepage.trailer.message}">welcome message goes here</td>
-            <td class="dtsecondcol" th:text=" II "></td>
-            <td class="dtthirdcol"  th:text="${today}">Today, Now</td>
-        </tr>
-        </tbody>
-    </table>
+        </form>
+    </div>
+    <div id="buttondiv" class="boxed">
+        <table id="buttontable">
+            <tbody>
+            <tr class="buttonrow">
+                <td><input form="dataentryform" class="buttoninput" id="findidbutton" type="submit"
+                           value="FIND BY ID"
+                           th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}"/></td>
+                <td><input form="dataentryform" class="buttoninput" id="findtitlebutton" type="submit"
+                           value="FIND BY TITLE"
+                           th:method="post" th:formaction="@{/findrecordbytitle}" th:object="${myarticle}"/>
+                </td>
+                <td><input form="dataentryform" class="buttoninput" id="findlikebutton" type="submit"
+                           value="FIND LIKE"
+                           th:method="post" th:formaction="@{/findrecordslike}" th:object="${myarticlelist}"/>
+                </td>
+                <td><input form="dataentryform" class="buttoninput" id="addbutton" type="submit" value="ADD"
+                           th:method="post" th:formaction="@{/addrecord}" th:object="${myarticle}"/></td>
+                <td><input form="dataentryform" class="buttoninput" id="updatebutton" type="submit"
+                           value="UPDATE"
+                           th:method="put" th:formaction="@{/updaterecord}" th:object="${myarticle}"/></td>
+                <td><input form="dataentryform" class="buttoninput" id="deletebutton" type="submit"
+                           value="DELETE"
+                           th:method="put" th:formaction="@{/deleterecordbyid}" th:object="${myarticle}"/></td>
+            </tr>
+            <tr class="buttonrow">
+                <td><input form="dataentryform" class="buttoninput" id="clearformbutton" type="submit"
+                           value="CLEAR FORM"
+                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
+                <td><input form="dataentryform" class="buttoninput" id="previousbutton" type="submit"
+                           value="PREVIOUS"
+                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
+                <td><input form="dataentryform" class="buttoninput" id="nextbutton" type="submit" value="NEXT"
+                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="messagetextdiv" class="boxed">
+        <label id="messagetextarealabel" for="messagetextarea">MESSAGES: </label>
+        <textarea id="messagetextarea" readonly th:text="${textmessage}"></textarea>
+    </div>
+    <div id="datetimefooterdiv">
+        <span id="dtfirstcol" th:text="#{welcomepage.trailer.message}">welcome message goes here</span>
+        <span id="dtsecondcol" th:text=" II "></span>
+        <span id="dtthirdcol" th:text="${today}">Today, Now</span>
+    </div>
 </div>
 </body>
 </html>
