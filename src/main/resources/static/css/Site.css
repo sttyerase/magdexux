@@ -43,7 +43,7 @@ h1,h2 {
 
 .buttonrow {
     align-content: center;
-    width: 100%;
+    width: 99%;
     background-color: darkred;
     padding: 2px;
 }
@@ -65,6 +65,7 @@ h1,h2 {
     width: 100%;
 }
 
+/** DATA TABLE DISPLAY **/
 #datarowsdiv {
     width: 99%;
     margin: 1px;
@@ -81,17 +82,34 @@ h1,h2 {
     background-color: lightgray;
 }
 
+/** DATA ENTRY **/
 #dataentrytable {
     width: 99%;
     background-color: darkseagreen;
 }
 
-#articleId {
-    width: 70px;
+#ahtitle #artitle {
+    width: 30%;
 }
 
-#buttontable {
-    width: 99%
+#ahauthor #arauthor {
+    width: 30%;
+}
+
+#ahcategory #arcategory {
+    width: 25%;
+}
+
+#ahmonth #armonth {
+    width: 5%;
+}
+
+#ahyear #aryear {
+    width: 5%;
+}
+
+#articleId {
+    width: 70px;
 }
 
 #dataentrydiv {
@@ -100,6 +118,12 @@ h1,h2 {
     border-radius: 5px;
 }
 
+/** BUTTON DISPLAY SECTION **/
+#buttondiv #buttontable {
+    width: 99%
+}
+
+/** SYSTEM MESSAGE DISPLAY AREA **/
 #messagetextdiv {
     width: 99%;
 }
@@ -113,6 +137,7 @@ h1,h2 {
     border-radius: 2px;
 }
 
+/** FOOTER: WELCOME and DATE TIME DISPLAY **/
 #datetimefooterdiv{
     font-size: xx-small;
     color: navy;
@@ -140,23 +165,4 @@ h1,h2 {
     width: 5%;
 }
 
-#ahtitle #artitle {
-    width: 30%;
-}
-
-#ahauthor #arauthor {
-    width: 30%;
-}
-
-#ahcategory #arcategory {
-    width: 25%;
-}
-
-#ahmonth #armonth {
-    width: 5%;
-}
-
-#ahyear #aryear {
-    width: 5%;
-}
 
