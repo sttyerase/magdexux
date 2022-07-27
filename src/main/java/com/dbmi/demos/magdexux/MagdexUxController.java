@@ -142,7 +142,8 @@ public class MagdexUxController {
         } // TRY-CATCH
         if (returnedObjects[0] == null) {
             textMessage = "No articles returned from query.";
-        } else {
+            aList.add(new Article()); // ADD SOMETHING TO THE LIST TO RETURN TO THE PAGE
+        } else { // CONVERT THE OBJECTS TO ARTICLES AND ADD TO LIST TO RETURN TO WEB PAGE
             aList = Arrays.stream(returnedObjects)
                     .map(object -> myMapper.convertValue(object, Article.class))
                     .collect(Collectors.toList());
