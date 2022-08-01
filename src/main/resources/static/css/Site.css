@@ -88,6 +88,15 @@ h1,h2 {
     background-color: darkseagreen;
 }
 
+#articleId, #articleMonth, #articleYear {
+    width: 70px;
+}
+
+/* CONTROL DATA TABLE COLUMN WIDTH */
+#ahid #arid {
+    width: 5%;
+}
+
 #ahtitle #artitle {
     width: 30%;
 }
@@ -106,10 +115,6 @@ h1,h2 {
 
 #ahyear #aryear {
     width: 5%;
-}
-
-#articleId {
-    width: 70px;
 }
 
 #dataentrydiv {
@@ -132,7 +137,7 @@ h1,h2 {
     padding: 2px;
     margin: 3px;
     width: 99%;
-    min-height: 90px;
+    min-height: 50px;
     border: solid 2px navy;
     border-radius: 2px;
 }
@@ -142,12 +147,13 @@ h1,h2 {
     font-size: xx-small;
     color: navy;
     background-color: #ffc107;
-    size: 200px;
 }
 
 #dtfirstcol {
     text-align: left;
-    width: 500px;
+    width: 45%;
+    float: left;
+    margin-left: 50px;
 }
 
 #dtsecondcol {
@@ -158,11 +164,8 @@ h1,h2 {
 #dtthirdcol {
     text-align: right;
     width: 45%;
-}
-
-/* CONTROL DATA TABLE COLUMN WIDTH */
-#ahid #arid {
-    width: 5%;
+    float: right;
+    margin-right: 50px;
 }
 
 
