@@ -3,20 +3,15 @@
 /** ELEMENT SELECTORS **/
 h1,h2 {
     color: Navy;
-    background-color: cornsilk;
+    background-color: #ffd607;
     text-align: center;
 }
 
 /** CLASS SELECTORS **/
-* {
+* { /** RESET ALL BOX PARAMS TO ZERO **/
     margin: 0;
     padding: 0;
     border: 0;
-}
-
-.boxed {
-    align-items: center;
-    justify-content: center;
 }
 
 .theader {
@@ -33,6 +28,7 @@ h1,h2 {
 .dataEntryLabel {
     width: 30%;
     text-align: right;
+    padding-right: 10px;
 }
 
 .textfieldtext {
@@ -68,11 +64,13 @@ h1,h2 {
 /** DATA TABLE DISPLAY **/
 #datarowsdiv {
     width: 99%;
+    height: 150px;        /** FIXED HEIGHT FOR VISIBLE TABLE **/
+    overflow-y: scroll;  /** ALLOW SCROLLING OF CONTENT **/
     margin: 1px;
 }
 
 #datarowstable {
-    display: block;
+    display: table;
     width: 99%;
     height: 200px;
     overflow-x: auto;
@@ -146,7 +144,7 @@ h1,h2 {
 #datetimefooterdiv{
     font-size: xx-small;
     color: navy;
-    background-color: #ffc107;
+    background-color: #ffd607;
 }
 
 #dtfirstcol {
