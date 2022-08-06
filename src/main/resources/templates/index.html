@@ -16,19 +16,19 @@
                 <td class="theader" id="ahid">ID</td>
                 <td class="theader" id="ahtitle">TITLE</td>
                 <td class="theader" id="ahauthor">AUTHOR</td>
-                <td class="theader" id="ahcategory">CATEGORY</td>
+                <td class="theader" id="ahcategory">COLUMN/TOPIC</td>
                 <td class="theader" id="ahmonth">MONTH</td>
                 <td class="theader" id="ahyear">YEAR</td>
             </tr>
             </thead>
             <tbody id="datarowstbody">
             <tr th:each="art: ${myarticlelist}">
-                <td id="arid" class="righttext" th:text="${{art.articleId}}">id</td>
-                <td id="artitle" th:text="${{art.articleTitle}}">title</td>
-                <td id="arauthor" th:text="${{art.articleAuthor}}">author</td>
-                <td id="arcategory" th:text="${{art.articleCategory}}">category</td>
-                <td id="armonth" class="righttext" th:text="${{art.articleMonth}}">id</td>
-                <td id="aryear" class="righttext" th:text="${{art.articleYear}}">id</td>
+                <td id="arid" class="righttext datatablerow" th:text="${{art.articleId}}">id</td>
+                <td id="artitle" class="datatablerow" th:text="${{art.articleTitle}}">title</td>
+                <td id="arauthor" class="datatablerow" th:text="${{art.articleAuthor}}">author</td>
+                <td id="arcategory" class="datatablerow" th:text="${{art.articleCategory}}">category</td>
+                <td id="armonth" class="righttext datatablerow" th:text="${{art.articleMonth}}">id</td>
+                <td id="aryear" class="righttext datatablerow" th:text="${{art.articleYear}}">id</td>
             </tr>
             </tbody>
         </table>
@@ -59,7 +59,7 @@
                                                      th:field="*{myarticle.articleSynopsis}"></td>
                 </tr>
                 <tr>
-                    <td class="dataEntryLabel"><label for="articleCategory">Article Category: </label></td>
+                    <td class="dataEntryLabel"><label for="articleCategory">Article Topic: </label></td>
                     <td class="dataEntryText"><input type="text" class="textfieldtext" id="articleCategory"
                                                      th:field="*{myarticle.articleCategory}"></td>
                 </tr>
@@ -70,12 +70,12 @@
                 </tr>
                 <tr>
                     <td class="dataEntryLabel"><label for="articleMonth">Article Month: </label></td>
-                    <td class="dataEntryText"><input type="text" class="textfieldtext" id="articleMonth"
+                    <td class="dataEntryText"><input type="text" class="textfieldtext righttext" id="articleMonth"
                                                      th:field="${myarticle.articleMonth}"></td>
                 </tr>
                 <tr>
                     <td class="dataEntryLabel"><label for="articleYear">Article Year: </label></td>
-                    <td class="dataEntryText"><input type="text" class="textfieldtext" id="articleYear"
+                    <td class="dataEntryText"><input type="text" class="textfieldtext righttext" id="articleYear"
                                                      th:field="*{myarticle.articleYear}"></td>
                 </tr>
                 </tbody>

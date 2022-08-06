@@ -15,6 +15,7 @@ h1,h2 {
 }
 
 .theader {
+    height: 15px;
     font-weight: bold;
     text-align: center;
     color: navy;
@@ -23,6 +24,7 @@ h1,h2 {
 
 .righttext {
     text-align: right;
+    padding-right: 4px;
 }
 
 .dataEntryLabel {
@@ -64,7 +66,7 @@ h1,h2 {
 /** DATA TABLE DISPLAY **/
 #datarowsdiv {
     width: 99%;
-    height: 150px;        /** FIXED HEIGHT FOR VISIBLE TABLE **/
+    height: 150px;        /** FIXED HEIGHT FOR TABLE WINDOW **/
     overflow-y: scroll;  /** ALLOW SCROLLING OF CONTENT **/
     margin: 1px;
 }
@@ -72,12 +74,13 @@ h1,h2 {
 #datarowstable {
     display: table;
     width: 99%;
-    height: 200px;
+    height: 100%;
     overflow-x: auto;
     font-size: x-small;
     border-style: solid;
     border-color: navy;
     background-color: lightgray;
+    vertical-align: top;
 }
 
 /** DATA ENTRY **/
@@ -90,28 +93,28 @@ h1,h2 {
     width: 70px;
 }
 
-/* CONTROL DATA TABLE COLUMN WIDTH */
-#ahid #arid {
+/** CONTROL DATA TABLE COLUMN WIDTH **/
+#ahid, #arid {
     width: 5%;
 }
 
-#ahtitle #artitle {
+#ahtitle, #artitle {
     width: 30%;
 }
 
-#ahauthor #arauthor {
+#ahauthor, #arauthor {
     width: 30%;
 }
 
-#ahcategory #arcategory {
+#ahcategory, #arcategory {
     width: 25%;
 }
 
-#ahmonth #armonth {
+#ahmonth, #armonth {
     width: 5%;
 }
 
-#ahyear #aryear {
+#ahyear, #aryear {
     width: 5%;
 }
 
@@ -149,21 +152,19 @@ h1,h2 {
 
 #dtfirstcol {
     text-align: left;
-    width: 45%;
+    width: calc(50% - 50px);
     float: left;
     margin-left: 50px;
 }
 
 #dtsecondcol {
     text-align: center;
-    width: 10%;
 }
 
 #dtthirdcol {
     text-align: right;
-    width: 45%;
-    float: right;
-    margin-right: 50px;
+    padding-right: 50px;
+    padding-left: 200px;
 }
 
 
