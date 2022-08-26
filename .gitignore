@@ -8,3 +8,11 @@ mvnw*
 .mvn/
 /target
 HELP.md
+
+### KEYSTORE FILES
+*.jks
+*.key
+*.csr
+*.crt
+*.pem
+
