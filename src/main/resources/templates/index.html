@@ -9,7 +9,7 @@
 <body>
 <div id="wrapperdiv">
     <h2>Magazine Index Entry Form</h2>
-    <div id="datarowsdiv">
+    <div id="datarowsdiv"> <!-- BLOCK FOR RETURN DATA TABLE -->
         <table id="datarowstable">
             <thead>
             <tr>
@@ -33,7 +33,7 @@
             </tbody>
         </table>
     </div>
-    <div id="dataentrydiv">
+    <div id="dataentrydiv"> <!-- BLOCK FOR DATA ENTRY FORM -->
         <form id="dataentryform" name="dataentryform" method="post">
             <table id="dataentrytable">
                 <tbody>
@@ -82,10 +82,13 @@
             </table>
         </form>
     </div>
-    <div id="buttondiv">
+    <div id="buttondiv"> <!-- BLOCK FOR USER INTERACTION BUTTONS -->
         <table id="buttontable">
             <tbody>
             <tr class="buttonrow">
+                <td><input form="dataentryform" class="buttoninput" id="clearformbutton" type="submit"
+                           value="CLEAR FORM"
+                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
                 <td><input form="dataentryform" class="buttoninput" id="findidbutton" type="submit"
                            value="FIND BY ID"
                            th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}"/></td>
@@ -97,6 +100,13 @@
                            value="FIND LIKE"
                            th:method="post" th:formaction="@{/findrecordslike}" th:object="${myarticlelist}"/>
                 </td>
+                <td><input form="dataentryform" class="buttoninput" id="previousbutton" type="submit"
+                           value="PREVIOUS"
+                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
+                <td><input form="dataentryform" class="buttoninput" id="nextbutton" type="submit" value="NEXT"
+                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
+            </tr>
+            <tr class="buttonrow">
                 <td><input form="dataentryform" class="buttoninput" id="addbutton" type="submit" value="ADD"
                            th:method="post" th:formaction="@{/addrecord}" th:object="${myarticle}"/></td>
                 <td><input form="dataentryform" class="buttoninput" id="updatebutton" type="submit"
@@ -105,28 +115,19 @@
                 <td><input form="dataentryform" class="buttoninput" id="deletebutton" type="submit"
                            value="DELETE"
                            th:method="put" th:formaction="@{/deleterecordbyid}" th:object="${myarticle}"/></td>
-            </tr>
-            <tr class="buttonrow">
-                <td><input form="dataentryform" class="buttoninput" id="clearformbutton" type="submit"
-                           value="CLEAR FORM"
+                <td><input form="dataentryform" class="buttoninput" id="commitbutton" type="submit" value="HOLD SPACE"
                            th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
-                <td><input form="dataentryform" class="buttoninput" id="previousbutton" type="submit"
-                           value="PREVIOUS"
-                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
-                <td><input form="dataentryform" class="buttoninput" id="nextbutton" type="submit" value="NEXT"
-                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
-                <td></td>
                 <td></td>
                 <td></td>
             </tr>
             </tbody>
         </table>
     </div>
-    <div id="messagetextdiv">
+    <div id="messagetextdiv"> <!-- BLOCK FOR APPLICATION MESSAGING -->
         <label id="messagetextarealabel" for="messagetextarea">MESSAGES: </label>
         <textarea id="messagetextarea" readonly th:text="${textmessage}"></textarea>
     </div>
-    <div id="datetimefooterdiv">
+    <div id="datetimefooterdiv"> <!-- FOOTER TO DISPLAY WELCOME MESSAGE AND DATE TIME -->
         <span id="dtfirstcol" th:text="#{welcomepage.trailer.message}">welcome message goes here</span>
         <span id="dtsecondcol" th:text=" II "></span>
         <span id="dtthirdcol" th:text="${today}">Today, Now</span>
