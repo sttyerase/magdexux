@@ -124,6 +124,15 @@ h1,h2 {
     border-radius: 5px;
 }
 
+#articleSynopsis {
+    min-height: 40px;
+    vertical-align: top;
+}
+
+#articleSynopsisLabel {
+    vertical-align: top;
+}
+
 /** BUTTON DISPLAY SECTION **/
 #buttondiv #buttontable {
     width: 99%
