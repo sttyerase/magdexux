@@ -40,7 +40,7 @@
                 <tr>
                     <td class="dataEntryLabel"><label for="articleId">Article Id: </label></td>
                     <td class="dataEntryText"><input type="text" class="textfieldtext righttext" id="articleId"
-                                                     name="articleid" form="dataentryform"
+                                                     form="dataentryform"
                                                      data-lpignore="true" th:field="*{myarticle.articleId}"/></td>
                 </tr>
                 <tr>
@@ -60,8 +60,8 @@
                 </tr>
                 <tr>
                     <td class="dataEntryLabel" id="articleSynopsisLabel"><label for="articleSynopsis">Article Synopsis: </label></td>
-                    <td class="dataEntryText"><textarea type="text" class="textfieldtext" id="articleSynopsis"
-                                                        th:field="*{myarticle.articleSynopsis}"></textarea></td>
+                    <td class="dataEntryText"><input class="textfieldtext" id="articleSynopsis"
+                                                        th:field="*{myarticle.articleSynopsis}"></td>
                 </tr>
                 <tr>
                     <td class="dataEntryLabel"><label for="articleKeywords">Article Keywords: </label></td>
@@ -102,9 +102,10 @@
                 </td>
                 <td><input form="dataentryform" class="buttoninput" id="previousbutton" type="submit"
                            value="PREVIOUS"
-                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
-                <td><input form="dataentryform" class="buttoninput" id="nextbutton" type="submit" value="NEXT"
-                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
+                           th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}"/></td>
+                <td><input form="dataentryform" class="buttoninput" id="nextbutton" type="submit"
+                           value="NEXT"
+                           th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}"/></td>
             </tr>
             <tr class="buttonrow">
                 <td><input form="dataentryform" class="buttoninput" id="addbutton" type="submit" value="ADD"
@@ -115,7 +116,8 @@
                 <td><input form="dataentryform" class="buttoninput" id="deletebutton" type="submit"
                            value="DELETE"
                            th:method="put" th:formaction="@{/deleterecordbyid}" th:object="${myarticle}"/></td>
-                <td><input form="dataentryform" class="buttoninput" id="commitbutton" type="submit" value="HOLD SPACE"
+                <td><input form="dataentryform" class="buttoninput" id="commitbutton" type="submit"
+                           value="PLACEHOLDER"
                            th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
                 <td></td>
                 <td></td>
