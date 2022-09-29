@@ -5,6 +5,7 @@
     <title>Welcome: Magazine Index Management Form</title>
     <!-- th:href must use leading / in path definition. -->
     <link href="../static/css/Site.css" th:href="@{/css/Site.css}" rel="stylesheet" media="screen"/>
+    <link rel="icon" href="data:image"> <!-- Silence the mozilla inspector error: favicon.ico not found -->
 </head>
 <body>
 <div id="wrapperdiv">
@@ -101,11 +102,11 @@
                            th:method="post" th:formaction="@{/findrecordslike}" th:object="${myarticlelist}"/>
                 </td>
                 <td><input form="dataentryform" class="buttoninput" id="previousbutton" type="submit"
-                           value="PREVIOUS"
-                           th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}"/></td>
+                           value="PREVIOUS ID"
+                           th:method="post" th:formaction="@{/findprevious}" th:object="${myarticle}"/></td>
                 <td><input form="dataentryform" class="buttoninput" id="nextbutton" type="submit"
-                           value="NEXT"
-                           th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}"/></td>
+                           value="NEXT ID"
+                           th:method="post" th:formaction="@{/findnext}" th:object="${myarticle}"/></td>
             </tr>
             <tr class="buttonrow">
                 <td><input form="dataentryform" class="buttoninput" id="addbutton" type="submit" value="ADD"

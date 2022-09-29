@@ -55,21 +55,66 @@ public class MagdexUxController {
     @RequestMapping("/findrecordbyid")
     public String findRecordById(Model aModel, HttpServletRequest request) {
         aList.clear();
-        Article theArticle;
+        Article theArticle = new Article();
+        textMessage = "NONSENSE";
         String theUri = "/find/id/";
         myLogger.debug("FIND RECORD BY ID: requested.");
         String idNum = request.getParameter("articleId");
         myLogger.debug("FIND RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
-        textMessage = "Found article id#: " + idNum;
-        WebClient myWebClient = WebClient.create(apiLocation);
-        theArticle = myWebClient.get()
-                .uri(theUri + idNum)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(Article.class)
-                .timeout(Duration.ofMillis(5000))
-                .doOnError(error -> textMessage = "Unable to find requested article id#: " + idNum + " error: " + error.getMessage())
-                .onErrorReturn(new Article()).block();
+        try {
+            theArticle = this.getSingleArticleData(theUri,idNum);
+            textMessage = "Found article id#: " + theArticle.getArticleId();
+        } catch (Exception e) {
+            textMessage = e.getMessage();
+        } // TRY-CATCH
+        aList.add(theArticle);
+        aModel.addAttribute("textmessage", textMessage);
+        aModel.addAttribute("myarticle", theArticle);
+        aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",aList);
+        return "index";
+    } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+
+    @RequestMapping("/findprevious")
+    public String findPreviousRecordById(Model aModel, HttpServletRequest request) {
+        aList.clear();
+        Article theArticle = new Article();
+        textMessage = "NONSENSE";
+        String theUri = "/find/id/";
+        myLogger.debug("FIND PREVIOUS RECORD BY ID: requested.");
+        long idno = Long.parseLong(request.getParameter("articleId")) - 1;
+        String idNum = Long.toString(idno);
+        myLogger.debug("FIND PREVIOUS RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
+        try {
+            theArticle = this.getSingleArticleData(theUri,idNum);
+            textMessage = "Found article id#: " + theArticle.getArticleId();
+        } catch (Exception e) {
+            textMessage = e.getMessage();
+        } // TRY-CATCH
+        aList.add(theArticle);
+        aModel.addAttribute("textmessage", textMessage);
+        aModel.addAttribute("myarticle", theArticle);
+        aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",aList);
+        return "index";
+    } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+
+    @RequestMapping("/findnext")
+    public String findNextRecordById(Model aModel, HttpServletRequest request) {
+        aList.clear();
+        Article theArticle = new Article();
+        textMessage = "NONSENSE";
+        String theUri = "/find/id/";
+        myLogger.debug("FIND NEXT RECORD BY ID: requested.");
+        long idno = Long.parseLong(request.getParameter("articleId")) + 1;
+        String idNum = Long.toString(idno);
+        myLogger.debug("FIND RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
+        try {
+            theArticle = this.getSingleArticleData(theUri,idNum);
+            textMessage = "Found article id#: " + theArticle.getArticleId();
+        } catch (Exception e) {
+            textMessage = e.getMessage();
+        } // TRY-CATCH
         aList.add(theArticle);
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", theArticle);
@@ -256,4 +301,20 @@ public class MagdexUxController {
         aModel.addAttribute("myarticlelist",aList);
         return "index";
     } // DELETERECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+
+    private Article getSingleArticleData(String aUri, String anIdNum) throws Exception {
+        Article anArticle;
+        WebClient myWebClient = WebClient.create(apiLocation);
+        anArticle = myWebClient.get()
+                .uri(aUri + anIdNum)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Article.class)
+                .timeout(Duration.ofMillis(5000))
+                .doOnError(error -> textMessage = "ERROR: Unable to find requested article id#: " + anIdNum)
+                .onErrorReturn(new Article()).block();
+        if(textMessage.contains("ERROR:")) throw new Exception(textMessage);
+        return anArticle;
+    } // GETARTICLEDATA
+
 } // CLASS
