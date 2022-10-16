@@ -11,7 +11,8 @@ public class Article {
     protected int articleYear;
 
     public Article() {
-    }
+        this(0,"","","","",0,0);
+    } // NULL CONSTRUCTOR
 
     public Article(long id, String title, String synopsis, String category, String keywords,
                    int month, int year) {
@@ -22,7 +23,7 @@ public class Article {
         this.articleKeywords = keywords;
         this.articleMonth = month;
         this.articleYear = year;
-    } // CONSTRUCTOR(INT,STRING,STRING)
+    } // CONSTRUCTOR(LONG,STRING,STRING,STRING,STRING,LONG,LONG)
 
     public long getArticleId() {
         return articleId;

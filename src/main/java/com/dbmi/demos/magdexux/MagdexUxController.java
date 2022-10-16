@@ -52,8 +52,9 @@ public class MagdexUxController {
         return "index";
     } // HOME(MODEL,HTTPSERVLETREQUEST)
 
-    @RequestMapping("/findrecordbyid")
-    public String findRecordById(Model aModel, HttpServletRequest request) {
+    // METHODS THAT INTERACT WITH THE API
+    @RequestMapping("/findarticlebyid")
+    public String findArticleById(Model aModel, HttpServletRequest request) {
         aList.clear();
         Article theArticle = new Article();
         textMessage = "NONSENSE";
@@ -62,10 +63,11 @@ public class MagdexUxController {
         String idNum = request.getParameter("articleId");
         myLogger.debug("FIND RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
         try {
-            theArticle = this.getSingleArticleData(theUri,idNum);
+            theArticle = this.retrieveSingleArticleFromAPI(theUri,idNum);
             textMessage = "Found article id#: " + theArticle.getArticleId();
         } catch (Exception e) {
             textMessage = e.getMessage();
+            myLogger.debug("FAILED TO RETRIEVE ARTICLE: " + e.getMessage());
         } // TRY-CATCH
         aList.add(theArticle);
         aModel.addAttribute("textmessage", textMessage);
@@ -76,20 +78,21 @@ public class MagdexUxController {
     } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/findprevious")
-    public String findPreviousRecordById(Model aModel, HttpServletRequest request) {
+    public String findPreviousArticleById(Model aModel, HttpServletRequest request) {
         aList.clear();
         Article theArticle = new Article();
         textMessage = "NONSENSE";
         String theUri = "/find/id/";
         myLogger.debug("FIND PREVIOUS RECORD BY ID: requested.");
-        long idno = Long.parseLong(request.getParameter("articleId")) - 1;
+        long idno = Long.parseLong(request.getParameter("articleId")) - 1; // DECREMENT ARTICLE ID BY 1
         String idNum = Long.toString(idno);
         myLogger.debug("FIND PREVIOUS RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
         try {
-            theArticle = this.getSingleArticleData(theUri,idNum);
+            theArticle = this.retrieveSingleArticleFromAPI(theUri,idNum);
             textMessage = "Found article id#: " + theArticle.getArticleId();
         } catch (Exception e) {
             textMessage = e.getMessage();
+            myLogger.debug("FAILED TO RETRIEVE ARTICLE: " + e.getMessage());
         } // TRY-CATCH
         aList.add(theArticle);
         aModel.addAttribute("textmessage", textMessage);
@@ -97,23 +100,24 @@ public class MagdexUxController {
         aModel.addAttribute("today", new Date().toString());
         aModel.addAttribute("myarticlelist",aList);
         return "index";
-    } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+    } // FINDPREVIOUSRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/findnext")
-    public String findNextRecordById(Model aModel, HttpServletRequest request) {
+    public String findNextArticleById(Model aModel, HttpServletRequest request) {
         aList.clear();
         Article theArticle = new Article();
         textMessage = "NONSENSE";
         String theUri = "/find/id/";
         myLogger.debug("FIND NEXT RECORD BY ID: requested.");
-        long idno = Long.parseLong(request.getParameter("articleId")) + 1;
+        long idno = Long.parseLong(request.getParameter("articleId")) + 1; // INCREMENT ARTICLE ID BY 1
         String idNum = Long.toString(idno);
-        myLogger.debug("FIND RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
+        myLogger.debug("FIND NEXT RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
         try {
-            theArticle = this.getSingleArticleData(theUri,idNum);
+            theArticle = this.retrieveSingleArticleFromAPI(theUri,idNum);
             textMessage = "Found article id#: " + theArticle.getArticleId();
         } catch (Exception e) {
             textMessage = e.getMessage();
+            myLogger.debug("FAILED TO RETRIEVE ARTICLE: " + e.getMessage());
         } // TRY-CATCH
         aList.add(theArticle);
         aModel.addAttribute("textmessage", textMessage);
@@ -121,50 +125,43 @@ public class MagdexUxController {
         aModel.addAttribute("today", new Date().toString());
         aModel.addAttribute("myarticlelist",aList);
         return "index";
-    } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+    } // FINDNEXTRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
-    @RequestMapping("/findrecordbytitle")
-    public String findRecordByTitle(Model aModel, HttpServletRequest request) {
+    @RequestMapping("/findarticlebytitle")
+    public String findArticleByTitle(Model aModel, HttpServletRequest request) {
         aList.clear();
-        Article theArticle;
+        Article theArticle = new Article();
+        textMessage = "NONSENSE";
         String theUri = "/find/title/";
         myLogger.debug("FIND RECORD BY TITLE: requested.");
         String title = request.getParameter("articleTitle");
         myLogger.debug("FIND RECORD BY TITLE url: " + apiLocation + "/find/title/" + title);
         textMessage = "Found article title: " + title;
-        WebClient myWebClient = WebClient.create(apiLocation);
-        theArticle = myWebClient.get()
-                .uri(theUri + title)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(Article.class)
-                .timeout(Duration.ofMillis(5000))
-                .doOnError(error -> textMessage = "Unable to find requested article title#: " + title + " error: " + error.getMessage())
-                .onErrorReturn(new Article()).block();
+        try {
+            theArticle = this.retrieveSingleArticleFromAPI(theUri,title);
+            textMessage = "Found article id#: " + theArticle.getArticleId();
+        } catch (Exception e) {
+            textMessage = e.getMessage();
+            myLogger.debug("FAILED TO RETRIEVE ARTICLE: " + e.getMessage());
+        } // TRY-CATCH
         aList.add(theArticle);
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", theArticle);
         aModel.addAttribute("today", new Date().toString());
         aModel.addAttribute("myarticlelist",aList);
         return "index";
-    } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+    } // FINDRECORDBYTITLE(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
-    @RequestMapping("/findrecordslike")
-    public String findRecordsLike(Model aModel, HttpServletRequest request) {
+    @RequestMapping("/findarticleslike")
+    public String findArticlesLike(Model aModel, HttpServletRequest request) {
         myLogger.debug("FIND RECORDS LIKE: requested.");
         aList.clear();
         String theUri = "/find/like";
-        Article exampleArticle = new Article();
-        Object[] returnedObjects = new Object[1];
+        Article exampleArticle;
+        Object[] returnedObjects = new Object[0];
         ObjectMapper myMapper = new ObjectMapper();
         // GET THE INPUT VALUES FROM THE FORM
-        exampleArticle.articleTitle = request.getParameter("articleTitle");
-        exampleArticle.articleAuthor = request.getParameter("articleAuthor");
-        exampleArticle.articleSynopsis = request.getParameter("articleSynopsis");
-        exampleArticle.articleCategory = request.getParameter("articleCategory");
-        exampleArticle.articleKeywords = request.getParameter("articleKeywords");
-        exampleArticle.articleMonth = Integer.parseInt(request.getParameter("articleMonth"));
-        exampleArticle.articleYear = Integer.parseInt(request.getParameter("articleYear"));
+        exampleArticle = this.getHTTPRequestData(request);
         myLogger.debug("FIND RECORDS LIKE: " + exampleArticle.articleTitle + " -- url: " + apiLocation + theUri);
         // USE WEBCLIENT TO SEND REQUEST AND RESOLVE RESPONSE
         WebClient myWebClient = WebClient.create(apiLocation);
@@ -185,7 +182,7 @@ public class MagdexUxController {
         } catch (RuntimeException runtimeException) {
             textMessage = "Error finding records like: " + runtimeException.getMessage();
         } // TRY-CATCH
-        if (returnedObjects[0] == null) {
+        if (returnedObjects.length == 0) {
             textMessage = "No articles returned from query.";
             aList.add(new Article()); // ADD SOMETHING TO THE LIST TO RETURN TO THE PAGE
         } else { // CONVERT THE OBJECTS TO ARTICLES AND ADD TO LIST TO RETURN TO WEB PAGE
@@ -201,88 +198,48 @@ public class MagdexUxController {
         return "index";
     } // FINDRECORDSLIKE(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
-    @RequestMapping("/addrecord")
-    public String addRecord(Model aModel, HttpServletRequest request) {
+    @RequestMapping("/addarticle")
+    public String addArticle(Model aModel) {
         aList.clear();
         String theUri = "/new";
         myLogger.debug("ADD RECORD: requested.");
         Article myArticle = new Article();
-        // GET THE INPUT VALUES FROM THE FORM
-        myArticle.articleTitle = request.getParameter("articleTitle");
-        myArticle.articleAuthor = request.getParameter("articleAuthor");
-        myArticle.articleSynopsis = request.getParameter("articleSynopsis");
-        myArticle.articleCategory = request.getParameter("articleCategory");
-        myArticle.articleKeywords = request.getParameter("articleKeywords");
-        myArticle.articleMonth = Integer.parseInt(request.getParameter("articleMonth"));
-        myArticle.articleYear = Integer.parseInt(request.getParameter("articleYear"));
         myLogger.debug("ADD RECORD: " + myArticle.articleTitle + " -- url: " + apiLocation + theUri);
-        // USE WEBCLIENT TO SEND REQUEST AND RESOLVE RESPONSE
-        WebClient myWebClient = WebClient.create(apiLocation);
-        Article savedArticle = new Article();
-        try {
-            savedArticle = myWebClient.post()
-                    .uri(theUri)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(myArticle)
-                    .retrieve()
-                    .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
-                    .bodyToMono(Article.class).block();
-            textMessage = "Added article: " + savedArticle.getArticleTitle() + " -- ID: " + savedArticle.getArticleId();
-        } catch (RuntimeException runtimeException) {
-            textMessage = "Error while adding record: " + runtimeException.getMessage();
-        } // TRY-CATCH
-        aList.add(savedArticle);
+        textMessage = "READY TO ADD ARTICLE.  PLEASE ENTER DATA AND COMMIT CHANGES";
+        aList.add(myArticle);
         aModel.addAttribute("textmessage", textMessage);
-        aModel.addAttribute("myarticle", savedArticle);
+        aModel.addAttribute("myarticle", myArticle);
         aModel.addAttribute("today", new Date().toString());
         aModel.addAttribute("myarticlelist",aList);
+        aModel.addAttribute("theUri", theUri);
+        aModel.addAttribute("theMethod","POST");
         return "index";
     } // ADDRECORD(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
-    @RequestMapping("/updaterecord")
-    public String updateRecord(Model aModel, HttpServletRequest request) {
+    @RequestMapping("/updatearticle")
+    public String updateArticle(Model aModel, HttpServletRequest request) {
         aList.clear();
-        String theUri = "/update/";
-        myLogger.debug("UPDATE RECORD BY ID: requested.");
+        String theUri = "/update/" + request.getParameter("articleId");
+        myLogger.debug("ADD RECORD: requested.");
         Article myArticle = new Article();
-        String idNum = request.getParameter("articleId");
-        myLogger.debug("UPDATE RECORD BY ID url: " + apiLocation + "/find/id/" + idNum);
-        // GET THE INPUT VALUES FROM THE FORM
-        myArticle.articleTitle = request.getParameter("articleTitle");
-        myArticle.articleAuthor = request.getParameter("articleAuthor");
-        myArticle.articleSynopsis = request.getParameter("articleSynopsis");
-        myArticle.articleCategory = request.getParameter("articleCategory");
-        myArticle.articleKeywords = request.getParameter("articleKeywords");
-        myArticle.articleMonth = Integer.parseInt(request.getParameter("articleMonth"));
-        myArticle.articleYear = Integer.parseInt(request.getParameter("articleYear"));
-        myLogger.debug("UPDATE RECORD: " + myArticle.articleTitle + " -- url: " + apiLocation + theUri);
-        // USE WEBCLIENT TO SEND REQUEST AND RESOLVE RESPONSE
-        WebClient myWebClient = WebClient.create(apiLocation);
-        Article savedArticle = new Article();
-        try {
-            savedArticle = myWebClient.put()
-                    .uri(theUri + idNum)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(myArticle)
-                    .retrieve()
-                    .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
-                    .bodyToMono(Article.class).block();
-            textMessage = "Updated article: " + savedArticle.getArticleTitle() + " -- ID: " + savedArticle.getArticleId();
-        } catch (RuntimeException runtimeException) {
-            textMessage = "Error while updating record: " + runtimeException.getMessage();
-        } // TRY-CATCH
-        aList.add(savedArticle);
+        myLogger.debug("ADD RECORD: " + myArticle.articleTitle + " -- url: " + apiLocation + theUri);
+        textMessage = "READY TO UPDATE ARTICLE.  PLEASE ENTER CHANGES TO THE DATA AND COMMIT.";
+        myArticle = this.getHTTPRequestData(request);
+        aList.add(myArticle);
         aModel.addAttribute("textmessage", textMessage);
-        aModel.addAttribute("myarticle", savedArticle);
+        aModel.addAttribute("myarticle", myArticle);
         aModel.addAttribute("today", new Date().toString());
         aModel.addAttribute("myarticlelist",aList);
+        aModel.addAttribute("theUri", theUri);
+        aModel.addAttribute("theMethod","PUT");
         return "index";
     } // UPDATERECORD(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
-    @RequestMapping("/deleterecordbyid")
-    public String deleteRecordById(Model aModel, HttpServletRequest request) {
+    @RequestMapping("/deletearticlebyid")
+    public String deleteArticleById(Model aModel, HttpServletRequest request) {
         aList.clear();
         Article delArticle;
+        textMessage = "NONSENSE";
         String theUri = "/delete/id/";
         myLogger.debug("DELETE RECORD: requested.");
         String idNum = request.getParameter("articleId");
@@ -292,6 +249,7 @@ public class MagdexUxController {
         delArticle = myWebClient.delete()
                 .uri(theUri + idNum)
                 .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, error -> Mono.error(new RuntimeException("API NOT FOUND: " + error.statusCode())))
                 .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
                 .bodyToMono(Article.class).block();
         aList.add(delArticle);
@@ -302,8 +260,86 @@ public class MagdexUxController {
         return "index";
     } // DELETERECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
-    private Article getSingleArticleData(String aUri, String anIdNum) throws Exception {
+    @RequestMapping("/commitchanges")
+    public String commitChanges(Model aModel, HttpServletRequest request) {
+        aList.clear();
+        Article myArticle;
+        textMessage = " COMMIT RETURNED NULL.  PLEASE SELECT ADD/UPDATE TO PREPARE COMMIT. ";
+        String theUri = request.getParameter("theUri");
+        String theMethod = request.getParameter("theMethod");
+        // GET THE INPUT VALUES FROM THE FORM
+        myArticle = this.getHTTPRequestData(request);
+        myLogger.debug("COMMIT CHANGES requested");
+        myLogger.debug("COMMIT CHANGES: " + myArticle.getArticleTitle() + " -- url: " + apiLocation + theUri);
+        // USE WEBCLIENT TO SEND REQUEST AND RESOLVE RESPONSE
+        WebClient myWebClient = WebClient.create(apiLocation);
+        Article savedArticle = new Article();
+            try {
+                if(theMethod.compareTo("POST") == 0) { // IF-ELSE
+                    savedArticle = myWebClient.post()
+                            .uri(theUri)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(myArticle)
+                            .retrieve()
+                            .onStatus(HttpStatus::is4xxClientError, error -> Mono.error(new RuntimeException("API NOT FOUND: " + error.statusCode())))
+                            .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
+                            .bodyToMono(Article.class).block();
+                    if(savedArticle != null) textMessage = "Added article: " + savedArticle.getArticleTitle() + " -- ID: " + savedArticle.getArticleId();
+                } else if(theMethod.compareTo("PUT") == 0) {
+                    savedArticle = myWebClient.put()
+                            .uri(theUri)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(myArticle)
+                            .retrieve()
+                            .onStatus(HttpStatus::is4xxClientError, error -> Mono.error(new RuntimeException("API NOT FOUND: " + error.statusCode())))
+                            .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
+                            .bodyToMono(Article.class).block();
+                    if(savedArticle != null) textMessage = "Updated article: " + savedArticle.getArticleTitle() + " -- ID: " + savedArticle.getArticleId();
+                } // IF-ELSE
+            } catch (RuntimeException runtimeException) {
+                textMessage = "Error while committing record: " + runtimeException.getMessage();
+                myLogger.debug("Error while committing changes: " + runtimeException.getMessage());
+            } // TRY-CATCH
+        aList.add(savedArticle);
+        aModel.addAttribute("textmessage", textMessage);
+        aModel.addAttribute("myarticle", savedArticle);
+        aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",aList);
+        return "index";
+    } // COMMITCHANGES(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+
+    // UTILITY METHODS
+
+    @RequestMapping("/clearform")
+    public String clearForm(Model aModel) {
+        aList.clear();
+        Article theArticle = new Article();
+        textMessage = "FORM CLEARED.";
+        aList.add(theArticle);
+        aModel.addAttribute("textmessage", textMessage);
+        aModel.addAttribute("myarticle", theArticle);
+        aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",aList);
+        return "index";
+    } // CLEARFORM(MODEL,HTTPSERVLETREQUEST)
+
+    private Article getHTTPRequestData(HttpServletRequest request) {
+        Article article = new Article();
+        article.setArticleId(Integer.parseInt(request.getParameter("articleId")));
+        article.setArticleTitle(request.getParameter("articleTitle"));
+        article.setArticleAuthor(request.getParameter("articleAuthor"));
+        article.setArticleSynopsis(request.getParameter("articleSynopsis"));
+        article.setArticleCategory(request.getParameter("articleCategory"));
+        article.setArticleKeywords(request.getParameter("articleKeywords"));
+        article.setArticleMonth(Integer.parseInt(request.getParameter("articleMonth")));
+        article.setArticleYear(Integer.parseInt(request.getParameter("articleYear")));
+        return article;
+    } // GETHTTPREQUESTDATA(HTTPSERVLETREQUEST)
+
+    private Article retrieveSingleArticleFromAPI(String aUri, String anIdNum) throws Exception {
         Article anArticle;
+        Article errorArticle = new Article();
+        errorArticle.setArticleTitle("ERROR: NO ARTICLE RETRIEVED FROM QUERY.");
         WebClient myWebClient = WebClient.create(apiLocation);
         anArticle = myWebClient.get()
                 .uri(aUri + anIdNum)
@@ -311,10 +347,10 @@ public class MagdexUxController {
                 .retrieve()
                 .bodyToMono(Article.class)
                 .timeout(Duration.ofMillis(5000))
-                .doOnError(error -> textMessage = "ERROR: Unable to find requested article id#: " + anIdNum)
-                .onErrorReturn(new Article()).block();
+                .doOnError(error -> textMessage = "ERROR: Unable to find requested article id#: " + anIdNum + " : " + error.getMessage())
+                .onErrorReturn(errorArticle).block();
         if(textMessage.contains("ERROR:")) throw new Exception(textMessage);
         return anArticle;
-    } // GETARTICLEDATA
+    } // RETRIEVESINGLEARTICLEDATA(STRING,STRING)
 
 } // CLASS

@@ -79,6 +79,8 @@
                     <td class="dataEntryText"><input type="text" class="textfieldtext righttext" id="articleYear"
                                                      th:field="*{myarticle.articleYear}"></td>
                 </tr>
+                <tr><td><input type="hidden" id="theUri" name="theUri" th:value="${theUri}"/></td></tr>
+                <tr><td><input type="hidden" id="theMethod" name="theMethod" th:value="${theMethod}"/></td></tr>
                 </tbody>
             </table>
         </form>
@@ -89,17 +91,17 @@
             <tr class="buttonrow">
                 <td><input form="dataentryform" class="buttoninput" id="clearformbutton" type="submit"
                            value="CLEAR FORM"
-                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
+                           th:method="post" th:formaction="@{/clearform}" th:object="${myarticle}"/></td>
                 <td><input form="dataentryform" class="buttoninput" id="findidbutton" type="submit"
                            value="FIND BY ID"
-                           th:method="post" th:formaction="@{/findrecordbyid}" th:object="${myarticle}"/></td>
+                           th:method="post" th:formaction="@{/findarticlebyid}" th:object="${myarticle}"/></td>
                 <td><input form="dataentryform" class="buttoninput" id="findtitlebutton" type="submit"
                            value="FIND BY TITLE"
-                           th:method="post" th:formaction="@{/findrecordbytitle}" th:object="${myarticle}"/>
+                           th:method="post" th:formaction="@{/findarticlebytitle}" th:object="${myarticle}"/>
                 </td>
                 <td><input form="dataentryform" class="buttoninput" id="findlikebutton" type="submit"
                            value="FIND LIKE"
-                           th:method="post" th:formaction="@{/findrecordslike}" th:object="${myarticlelist}"/>
+                           th:method="post" th:formaction="@{/findarticleslike}" th:object="${myarticlelist}"/>
                 </td>
                 <td><input form="dataentryform" class="buttoninput" id="previousbutton" type="submit"
                            value="PREVIOUS ID"
@@ -110,17 +112,19 @@
             </tr>
             <tr class="buttonrow">
                 <td><input form="dataentryform" class="buttoninput" id="addbutton" type="submit" value="ADD"
-                           th:method="post" th:formaction="@{/addrecord}" th:object="${myarticle}"/></td>
+                           th:method="post" th:formaction="@{/addarticle}" th:object="${myarticle}"/></td>
                 <td><input form="dataentryform" class="buttoninput" id="updatebutton" type="submit"
                            value="UPDATE"
-                           th:method="put" th:formaction="@{/updaterecord}" th:object="${myarticle}"/></td>
+                           th:method="put" th:formaction="@{/updatearticle}" th:object="${myarticle}"/></td>
                 <td><input form="dataentryform" class="buttoninput" id="deletebutton" type="submit"
                            value="DELETE"
-                           th:method="put" th:formaction="@{/deleterecordbyid}" th:object="${myarticle}"/></td>
+                           th:method="put" th:formaction="@{/deletearticlebyid}" th:object="${myarticle}"/></td>
                 <td><input form="dataentryform" class="buttoninput" id="commitbutton" type="submit"
-                           value="PLACEHOLDER"
-                           th:method="post" th:formaction="@{/}" th:object="${myarticle}"/></td>
-                <td></td>
+                           value="COMMIT CHANGES"
+                           th:method="post" th:formaction="@{/commitchanges}" th:object="${myarticle}"/></td>
+                <td><input form="dataentryform" class="buttoninput" id="cancelbutton" type="submit"
+                           value="CANCEL CHANGES"
+                           th:method="post" th:formaction="@{/clearform}" th:object="${myarticle}"/></td>
                 <td></td>
             </tr>
             </tbody>
