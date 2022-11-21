@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Controller
@@ -26,7 +27,8 @@ public class MagdexUxController {
     private String textMessage = "Text message goes here.";
     @Value("${magdex.api.location}")
     private String apiLocation;
-    private List<Article> aList = new Stack<>();
+    private LinkedList<Article> aList = new LinkedList<>();
+    private int aListPointer;
 
     @Bean
     public ResourceBundleMessageSource messageSource() {
@@ -39,6 +41,7 @@ public class MagdexUxController {
     public String home(Model aModel, HttpServletRequest request) {
         textMessage = "Form cleared.";
         aList.clear();
+        aListPointer = 0;
         myLogger.debug("Requested root page.");
         request.getSession().invalidate();
         request.getSession(true);
@@ -52,49 +55,54 @@ public class MagdexUxController {
         return "index";
     } // HOME(MODEL,HTTPSERVLETREQUEST)
 
-    // METHODS THAT INTERACT WITH THE API
+    // METHODS THAT INTERACT WITH THE MAGDEX API
     @RequestMapping("/findarticlebyid")
     public String findArticleById(Model aModel, HttpServletRequest request) {
         aList.clear();
+        aListPointer = 0;
         textMessage = "NONSENSE";
         Article exampleArticle = new Article();
         myLogger.debug("FIND RECORD BY ID url: " + apiLocation + "/find/id/" + exampleArticle.getArticleId());
         exampleArticle.setArticleId(Integer.parseInt(request.getParameter("articleId")));
-        this.retrieveArticleList("/find/id",exampleArticle);
+        this.retrieveArticleList("/find/id",exampleArticle); // SEND ARTICLEID ONLY IN BODY
+        aListPointer = 0;
         aModel.addAttribute("textmessage", textMessage);
-        aModel.addAttribute("myarticle", aList.get(0));
+        aModel.addAttribute("myarticle", aList.get(aListPointer));
         aModel.addAttribute("today", new Date().toString());
         aModel.addAttribute("myarticlelist",aList);
         return "index";
     } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     @RequestMapping("/findprevious")
-    public String findPreviousArticleById(Model aModel, HttpServletRequest request) {
+    public String findPreviousInList(Model aModel) {
         textMessage = "NONSENSE";
         String theUri = "/find/id/";
         myLogger.debug("FIND PREVIOUS RECORD BY ID url: " + apiLocation + "/find/id/");
+        updateListPointer(false);
         aModel.addAttribute("textmessage", textMessage);
-        aModel.addAttribute("myarticle", aList.get(0));
+        aModel.addAttribute("myarticle", aList.get(aListPointer));
         aModel.addAttribute("today", new Date().toString());
         aModel.addAttribute("myarticlelist",aList);
         return "index";
-    } // FINDPREVIOUSRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+    } // FINDPREVIOUSRECORDBYID(MODEL)
 
     @RequestMapping("/findnext")
-    public String findNextArticleById(Model aModel, HttpServletRequest request) {
+    public String findNextInList(Model aModel) {
         textMessage = "NONSENSE";
         String theUri = "/find/id/";
         myLogger.debug("FIND NEXT RECORD BY ID url: " + apiLocation + "/find/id/");
+        updateListPointer(true);
         aModel.addAttribute("textmessage", textMessage);
-        aModel.addAttribute("myarticle", aList.get(0));
+        aModel.addAttribute("myarticle", aList.get(aListPointer));
         aModel.addAttribute("today", new Date().toString());
         aModel.addAttribute("myarticlelist",aList);
         return "index";
-    } // FINDNEXTRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+    } // FINDNEXTRECORDBYID(MODEL)
 
     @RequestMapping("/findarticleslike")
     public String findArticlesLike(Model aModel, HttpServletRequest request) {
         aList.clear();
+        aListPointer = 0;
         String theUri = "/find/like";
         Article exampleArticle;
         // GET THE INPUT VALUES FROM THE FORM
@@ -112,8 +120,8 @@ public class MagdexUxController {
     @RequestMapping("/addarticle")
     public String addArticle(Model aModel) {
         aList.clear();
+        aListPointer = 0;
         String theUri = "/new";
-        myLogger.debug("ADD RECORD: requested.");
         Article myArticle = new Article();
         myLogger.debug("ADD RECORD: " + myArticle.articleTitle + " -- url: " + apiLocation + theUri);
         textMessage = "READY TO ADD ARTICLE.  PLEASE ENTER DATA AND COMMIT CHANGES";
@@ -130,6 +138,7 @@ public class MagdexUxController {
     @RequestMapping("/updatearticle")
     public String updateArticle(Model aModel, HttpServletRequest request) {
         aList.clear();
+        aListPointer = 0;
         String theUri = "/update/" + request.getParameter("articleId");
         myLogger.debug("ADD RECORD: requested.");
         Article myArticle = new Article();
@@ -149,6 +158,7 @@ public class MagdexUxController {
     @RequestMapping("/deletearticlebyid")
     public String deleteArticleById(Model aModel, HttpServletRequest request) {
         aList.clear();
+        aListPointer = 0;
         Article delArticle;
         textMessage = "NONSENSE";
         String theUri = "/delete/id/";
@@ -174,6 +184,7 @@ public class MagdexUxController {
     @RequestMapping("/commitchanges")
     public String commitChanges(Model aModel, HttpServletRequest request) {
         aList.clear();
+        aListPointer = 0;
         Article myArticle;
         textMessage = " COMMIT RETURNED NULL.  PLEASE SELECT ADD/UPDATE TO PREPARE COMMIT. ";
         String theUri = request.getParameter("theUri");
@@ -220,10 +231,10 @@ public class MagdexUxController {
     } // COMMITCHANGES(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
 
     // UTILITY METHODS
-
     @RequestMapping("/clearform")
     public String clearForm(Model aModel) {
         aList.clear();
+        aListPointer = 0;
         Article theArticle = new Article();
         textMessage = "FORM CLEARED.";
         aList.add(theArticle);
@@ -249,9 +260,12 @@ public class MagdexUxController {
 
     private void retrieveArticleList(String theUri, Article exampleArticle) {
         aList.clear();
+        aListPointer = 0;
         Object[] returnedObjects = new Object[0];
         ObjectMapper myMapper = new ObjectMapper();
         WebClient myWebClient = WebClient.create(apiLocation);
+        List<Article> tempList = new ArrayList<>();
+        tempList.add(new Article());
         try {
             Mono<Object[]> myMono = myWebClient.post()
                     .uri(theUri)
@@ -273,11 +287,26 @@ public class MagdexUxController {
             textMessage = "No articles returned from query.";
             aList.add(new Article()); // ADD SOMETHING TO THE LIST TO RETURN TO THE PAGE
         } else { // CONVERT THE OBJECTS TO ARTICLES AND ADD TO LIST TO RETURN TO WEB PAGE
-            aList = Arrays.stream(returnedObjects)
+            tempList = Arrays.stream(returnedObjects)
                     .map(object -> myMapper.convertValue(object, Article.class))
                     .collect(Collectors.toList());
-            textMessage = "Found " + aList.size() + " records like query.";
+            textMessage = "Found " + tempList.size() + " records like query.";
         } // IF-ELSE
-    } // RETRIEVEARTICLELIST()
+        // TRANSFER RESULTS TO LINKED LIST TO ALLOW MANIPULATION OF THE LIST
+        AtomicInteger i = new AtomicInteger(0);
+        tempList.forEach(article -> aList.add(i.getAndIncrement(),article));
+    } // RETRIEVEARTICLELIST(STRING,ARTICLE)
+
+    private void updateListPointer(boolean next) {
+        if(next) {
+            if(aListPointer >= aList.size() - 1) aListPointer = 0;
+            else aListPointer++;
+            textMessage = "Next article in list.";
+        } else {
+            if(aListPointer <= 0) aListPointer = aList.size() - 1;
+            else aListPointer--;
+            textMessage = "Previous article in list";
+        } // IF-ELSE
+    } // UPDATELISTPOINTER(BOOLEAN)
 
 } // CLASS
