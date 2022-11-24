@@ -99,6 +99,9 @@
                            value="FIND LIKE"
                            th:method="post" th:formaction="@{/findarticleslike}" th:object="${myarticlelist}"/>
                 </td>
+                <td><input form="dataentryform" class="buttoninput" id="yrmobutton" type="submit"
+                           value="FIND YR and MN"
+                           th:method="post" th:formaction="@{/findarticlesbyyearandmonth}" th:object="${myarticlelist}"/></td>
                 <td><input form="dataentryform" class="buttoninput" id="previousbutton" type="submit"
                            value="PREVIOUS"
                            th:method="post" th:formaction="@{/findprevious}" th:object="${myarticlelist}"/></td>

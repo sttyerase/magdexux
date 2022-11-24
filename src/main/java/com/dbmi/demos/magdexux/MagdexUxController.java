@@ -62,9 +62,48 @@ public class MagdexUxController {
         aListPointer = 0;
         textMessage = "NONSENSE";
         Article exampleArticle = new Article();
-        myLogger.debug("FIND RECORD BY ID url: " + apiLocation + "/find/id/" + exampleArticle.getArticleId());
-        exampleArticle.setArticleId(Integer.parseInt(request.getParameter("articleId")));
+        try { // MANAGE BLANK ENTRY IN ID FIELD
+            exampleArticle.setArticleId(Integer.parseInt(request.getParameter("articleId")));
+        } catch (NumberFormatException nfe) {
+            textMessage = "No value entered for id. Please enter an article id to search. ";
+            aList.add(new Article());
+            aModel.addAttribute("textmessage", textMessage);
+            aModel.addAttribute("myarticle", aList.get(aListPointer));
+            aModel.addAttribute("today", new Date().toString());
+            aModel.addAttribute("myarticlelist",aList);
+            return "index";
+        } // TRY-CATCH
+        myLogger.debug("FIND RECORD BY ID url: " + apiLocation + "/find/id -- " + exampleArticle.getArticleId());
         this.retrieveArticleList("/find/id",exampleArticle); // SEND ARTICLEID ONLY IN BODY
+        aListPointer = 0;
+        aModel.addAttribute("textmessage", textMessage);
+        aModel.addAttribute("myarticle", aList.get(aListPointer));
+        aModel.addAttribute("today", new Date().toString());
+        aModel.addAttribute("myarticlelist",aList);
+        return "index";
+    } // FINDRECORDBYID(MODEL,HTTPSERVLETREQUEST,HTTPSERVLETRESPONSE)
+
+    @RequestMapping("/findarticlesbyyearandmonth")
+    public String findArticlesByYearAndMonth(Model aModel, HttpServletRequest request) {
+        aList.clear();
+        aListPointer = 0;
+        textMessage = "NONSENSE";
+        Article exampleArticle = new Article();
+        myLogger.debug("FIND RECORD BY ID url: " + apiLocation + "/find/yearandmonth/" + exampleArticle.getArticleId());
+        try { // MANAGE BLANK ENTRY IN MONTH/YEAR FIELDS
+            exampleArticle.setArticleYear(Integer.parseInt(request.getParameter("articleYear")));
+            // IF ARTICLE MONTH == 0, API WIL FIND ALL ARTICLES FOR THE YEAR
+            exampleArticle.setArticleMonth(Integer.parseInt(request.getParameter("articleMonth")));
+        } catch (NumberFormatException nfe) {
+            textMessage = "No value entered for either year or month. Please enter a value to search. ";
+            aList.add(new Article());
+            aModel.addAttribute("textmessage", textMessage);
+            aModel.addAttribute("myarticle", aList.get(aListPointer));
+            aModel.addAttribute("today", new Date().toString());
+            aModel.addAttribute("myarticlelist",aList);
+            return "index";
+        } // TRY-CATCH
+        this.retrieveArticleList("/find/yearandmonth",exampleArticle); // SEND ARTICLEID ONLY IN BODY
         aListPointer = 0;
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", aList.get(aListPointer));
