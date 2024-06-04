@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,7 +27,7 @@ public class MagdexUxController {
     private String textMessage = "Text message goes here.";
     @Value("${magdex.api.location}")
     private String apiLocation;
-    private LinkedList<Article> aList = new LinkedList<>();
+    private final LinkedList<Article> aList = new LinkedList<>();
     private int aListPointer;
 
     @Bean
@@ -116,7 +116,7 @@ public class MagdexUxController {
     public String findPreviousInList(Model aModel) {
         textMessage = "NONSENSE";
         String theUri = "/find/id/";
-        myLogger.debug("FIND PREVIOUS RECORD BY ID url: " + apiLocation + "/find/id/");
+        myLogger.debug("FIND PREVIOUS RECORD BY ID url: " + apiLocation + theUri);
         updateListPointer(false);
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", aList.get(aListPointer));
@@ -129,7 +129,7 @@ public class MagdexUxController {
     public String findNextInList(Model aModel) {
         textMessage = "NONSENSE";
         String theUri = "/find/id/";
-        myLogger.debug("FIND NEXT RECORD BY ID url: " + apiLocation + "/find/id/");
+        myLogger.debug("FIND NEXT RECORD BY ID url: " + apiLocation + theUri);
         updateListPointer(true);
         aModel.addAttribute("textmessage", textMessage);
         aModel.addAttribute("myarticle", aList.get(aListPointer));
@@ -209,8 +209,8 @@ public class MagdexUxController {
         delArticle = myWebClient.delete()
                 .uri(theUri + idNum)
                 .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, error -> Mono.error(new RuntimeException("API NOT FOUND: " + error.statusCode())))
-                .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
+                .onStatus(HttpStatusCode::is4xxClientError, error -> Mono.error(new RuntimeException("API NOT FOUND: " + error.statusCode())))
+                .onStatus(HttpStatusCode::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
                 .bodyToMono(Article.class).block();
         aList.add(delArticle);
         aModel.addAttribute("textmessage", textMessage);
@@ -242,8 +242,8 @@ public class MagdexUxController {
                             .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(myArticle)
                             .retrieve()
-                            .onStatus(HttpStatus::is4xxClientError, error -> Mono.error(new RuntimeException("API NOT FOUND: " + error.statusCode())))
-                            .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
+                            .onStatus(HttpStatusCode::is4xxClientError, error -> Mono.error(new RuntimeException("API NOT FOUND: " + error.statusCode())))
+                            .onStatus(HttpStatusCode::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
                             .bodyToMono(Article.class).block();
                     if(savedArticle != null) textMessage = "Added article: " + savedArticle.getArticleTitle() + " -- ID: " + savedArticle.getArticleId();
                 } else if(theMethod.compareTo("PUT") == 0) {
@@ -252,8 +252,8 @@ public class MagdexUxController {
                             .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(myArticle)
                             .retrieve()
-                            .onStatus(HttpStatus::is4xxClientError, error -> Mono.error(new RuntimeException("API NOT FOUND: " + error.statusCode())))
-                            .onStatus(HttpStatus::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
+                            .onStatus(HttpStatusCode::is4xxClientError, error -> Mono.error(new RuntimeException("API NOT FOUND: " + error.statusCode())))
+                            .onStatus(HttpStatusCode::is5xxServerError, error -> Mono.error(new RuntimeException("SERVER ERROR: " + error.statusCode())))
                             .bodyToMono(Article.class).block();
                     if(savedArticle != null) textMessage = "Updated article: " + savedArticle.getArticleTitle() + " -- ID: " + savedArticle.getArticleId();
                 } // IF-ELSE
