@@ -140,4 +140,32 @@
     </div>
 </div>
 </body>
+<script> <!-- KEYBOARD EVENT INPUTS -->
+let debug = true;
+let addButton = document.getElementById("addbutton");
+let updateButton = document.getElementById("updatebutton");
+let deleteButton = document.getElementById("deletebutton");
+let commitButton = document.getElementById("commitbutton");
+let cancelButton = document.getElementById("cancelbutton");
+document.addEventListener("keydown", (ev) => {
+        console.log("EVENT LISTENER ADDED");
+        if (ev.ctrlKey && ev.key === "a") {
+            if (debug === true) console.log("ADD BUTTON SELECTED.")
+            addButton.click();
+        } else if (ev.ctrlKey && ev.key === "u") {
+            if (debug === true) console.log("UPDATE BUTTON SELECTED.")
+            updateButton.click();
+        } else if (ev.ctrlKey && ev.key === "d") {
+            if (debug === true) console.log("DELETE BUTTON SELECTED.")
+            deleteButton.click();
+        } else if (ev.ctrlKey && ev.key === "c") {
+            if (debug === true) console.log("COMMIT BUTTON SELECTED.")
+            commitButton.click();
+        } else if (ev.ctrlKey && ev.key === "z") {
+            if (debug === true) console.log("CANCEL BUTTON SELECTED.")
+            cancelButton.click();
+        } // IF-ELSE
+    }
+);
+</script>
 </html>
